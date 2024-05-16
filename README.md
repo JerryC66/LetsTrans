@@ -8,6 +8,7 @@ LetsTrans 是一个 Web 端计算机辅助翻译系统，旨在为用户提供�
 
 ## 前端
 vue3 + vite + ESlint
+
 tailwindcss + arcodesign
 
 ## 后端
