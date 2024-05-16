@@ -7,7 +7,9 @@ LetsTrans 是一个 Web 端计算机辅助翻译系统，旨在为用户提供�
 # 🚀技术选型
 
 ## 前端
-vue3 + vite + pinia + ESlint 
+vue3 + vite + ESlint
+
+tailwindcss + arcodesign
 
 ## 后端
 
@@ -31,19 +33,19 @@ vue3 + vite + pinia + ESlint
     <!-- FirwoodLin -->
     <td align="center">
       <img src="https://github.com/firwoodlin.png" width="100" alt="FirwoodLin"><br>
-      <b>林彬彬</b><br>
+      <b>FirwoodLin</b><br>
       神彬彬圣彬彬 啊！我们伟大的队长啊！
     </td>
     <!-- JerryC66 -->
     <td align="center">
       <img src="https://github.com/JerryC66.png" width="100" alt="JerryC66"><br>
-      <b>蔡佳睿</b><br>
+      <b>ReyC</b><br>
       这是什么？那是什么？卑微前端人一位~
     </td>
     <!-- Sein404 -->
     <td align="center">
       <img src="https://github.com/Sein404.png" width="100" alt="Sein404"><br>
-      <b>李家成</b><br>
+      <b>Li Ka-shing</b><br>
       这是一块砖 pm-design-前端-后端 一锅端
     </td>
   </tr>
