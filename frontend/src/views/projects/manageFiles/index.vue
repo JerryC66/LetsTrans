@@ -4,7 +4,7 @@
     :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }"
   >
     <div class="project-title">
-      <a-typography-title :heading="3">项目名称</a-typography-title>
+      <a-typography-title :heading="4">Project X</a-typography-title>
     </div>
 
     <nav>
@@ -78,7 +78,7 @@
         <a-list-item
           v-for="file in files"
           :key="file.fileId"
-          @click="gotoTranslatePage(file.fileId)"
+          @dblclick="gotoTranslatePage(route.params.projectId, file.fileId)"
         >
           <wrapper
             class="list-item"
@@ -125,23 +125,24 @@
 
 <script setup lang="ts">
   import { computed, ref } from 'vue';
-  import { useRouter } from 'vue-router';
+  import { useRouter, useRoute } from 'vue-router';
   import { useAppStore } from '@/store';
 
   import UploadFileModal from '@/views/projects/components/upload-file-modal/index.vue';
 
   const appStore = useAppStore();
   const router = useRouter();
+  const route = useRoute();
 
   const visible = ref(false);
   const theme = computed(() => {
     return appStore.theme;
   });
 
-  const gotoTranslatePage = (fileId: any) => {
+  const gotoTranslatePage = (projectId: any, fileId: any) => {
     router.push({
       name: 'translatePage',
-      params: { fileId },
+      params: { projectId, fileId },
     });
   };
 

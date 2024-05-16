@@ -64,7 +64,7 @@
         <a-list-item
           v-for="project in projects"
           :key="project.projectId"
-          @click="gotoFileManage(project.projectId)"
+          @dblclick="gotoFileManage(project.projectId)"
         >
           <wrapper
             class="list-item"

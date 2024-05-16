@@ -32,4 +32,7 @@ export default {
   'project.file.creater': 'Creater',
   'project.files.download': 'Bulk Download',
   'project.files.delete': 'Bulk Delete',
+
+  'translate.addterm': 'Add Term',
+  'translate.pretrans': 'Pre Trans',
 };

@@ -23,7 +23,9 @@
             <a-form-item
               field="source language"
               validate-trigger="input"
-              :rules="[{ required: true, message: 'firstname is required' }]"
+              :rules="[
+                { required: true, message: 'source language is required' },
+              ]"
               no-style
             >
               <a-select
@@ -41,7 +43,9 @@
             <a-form-item
               field="target language"
               validate-trigger="input"
-              :rules="[{ required: true, message: 'lastname is required' }]"
+              :rules="[
+                { required: true, message: 'target language is required' },
+              ]"
               no-style
             >
               <a-select

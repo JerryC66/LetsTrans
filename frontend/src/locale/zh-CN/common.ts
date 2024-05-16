@@ -30,4 +30,7 @@ export default {
   'project.file.creater': '创建者',
   'project.files.download': '批量下载',
   'project.files.delete': '批量删除',
+
+  'translate.addterm': '导入新术语',
+  'translate.pretrans': '全文预翻译',
 };

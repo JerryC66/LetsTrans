@@ -35,20 +35,18 @@ const DASHBOARD: AppRouteRecordRaw = {
         showInMenu: false,
         props: true,
       },
-      children: [
-        {
-          path: ':fileId/translate',
-          name: 'translatePage',
-          component: () => import('@/views/projects/translatePage/index.vue'),
-          meta: {
-            locale: 'menu.projects.translate',
-            requiresAuth: true,
-            roles: ['*'],
-            showInMenu: false,
-            props: true,
-          },
-        },
-      ],
+    },
+    {
+      path: ':projectId/files/:fileId/translate',
+      name: 'translatePage',
+      component: () => import('@/views/projects/translatePage/index.vue'),
+      meta: {
+        locale: 'menu.projects.translate',
+        requiresAuth: true,
+        roles: ['*'],
+        showInMenu: false,
+        props: true,
+      },
     },
   ],
 };
