@@ -33,20 +33,23 @@ tailwindcss + arcodesign
     <!-- FirwoodLin -->
     <td align="center">
       <img src="https://github.com/firwoodlin.png" width="100" alt="FirwoodLin"><br>
-      <b>FirwoodLin</b><br>
-      神彬彬圣彬彬 啊！我们伟大的队长啊！
+      <b>Firwood Lin</b><br>
+      Backend Dev & Ops<br>
+      Architective Design
     </td>
     <!-- JerryC66 -->
     <td align="center">
       <img src="https://github.com/JerryC66.png" width="100" alt="JerryC66"><br>
-      <b>ReyC</b><br>
-      这是什么？那是什么？卑微前端人一位~
+      <b>CC</b><br>
+      Frontend Developer<br>
+      Design Debater
     </td>
     <!-- Sein404 -->
     <td align="center">
       <img src="https://github.com/Sein404.png" width="100" alt="Sein404"><br>
       <b>Li Ka-shing</b><br>
-      这是一块砖 pm-design-前端-后端 一锅端
+      PM & Design<br>
+      Doc Writer & Pre Speaker
     </td>
   </tr>
 </table>
