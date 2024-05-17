@@ -30,7 +30,7 @@
             <a-progress :percent="0.6" :style="{ width: '100%' }"></a-progress>
           </div>
           <div class="description">
-            <a-typography-text> 6600字/共10000字 </a-typography-text>
+            <a-typography-text> 6000字/共10000字 </a-typography-text>
           </div>
         </div>
       </div>
@@ -48,12 +48,12 @@
             <icon-download size="18" />
           </div>
           <div class="import">
-            <a-button type="primary" shape="round">{{
+            <a-button size="large" type="primary" shape="round">{{
               $t('translate.addterm')
             }}</a-button>
           </div>
           <div class="pre-trans">
-            <a-button type="primary" shape="round">{{
+            <a-button size="large" type="primary" shape="round">{{
               $t('translate.pretrans')
             }}</a-button>
           </div>
@@ -149,12 +149,14 @@
         justify-content: space-evenly;
         padding-right: 20px;
         .download {
-          width: 32px;
-          height: 32px;
+          width: 36px;
+          height: 36px;
           border-radius: 30%;
           background-color: #165dff;
           color: white;
-          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
       }
     }
