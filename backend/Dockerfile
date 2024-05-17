@@ -5,17 +5,14 @@ FROM golang:1.22.1 AS builder
 WORKDIR /app
 
 # 复制 go.mod 和 go.sum 文件
-COPY go.mod ./
-COPY go.sum ./
-ENV GOPROXY=https://goproxy.cn
-# 下载依赖
-RUN  go mod download
-
-# 复制源代码文件
 COPY . .
 
-# 编译项目，创建二进制文件
-RUN CGO_ENABLED=0 GOOS=linux go build -o myapp
+RUN go env -w GO111MODULE=on \
+    && go env -w GOPROXY=https://goproxy.cn,direct \
+    && go env -w CGO_ENABLED=0 \
+    && go env \
+    && go mod tidy \
+    && go build -o server .
 
 #CMD ["./myapp"]
 
@@ -26,7 +23,7 @@ FROM alpine:latest
 WORKDIR /
 
 # 从构建器镜像中复制二进制文件到基础镜像
-COPY --from=builder /app/myapp .
+COPY --from=builder /app/server .
 
 # 添加运行时所需的任何额外库
 RUN apk --no-cache add ca-certificates
@@ -35,4 +32,4 @@ RUN apk --no-cache add ca-certificates
 EXPOSE 8080
 
 # 指定容器启动时运行的命令
-CMD ["./myapp"]
+ENTRYPOINT ./server
