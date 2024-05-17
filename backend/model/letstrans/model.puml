@@ -1,0 +1,70 @@
+@startuml
+namespace letstrans {
+    class BaseModel << (S,Aquamarine) >> {
+        + ID uint
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + DeletedAt gorm.DeletedAt
+
+    }
+    class Document << (S,Aquamarine) >> {
+        + Author string
+        + Filetype string
+        + Name string
+        + Progress float64
+        + SourceLang string
+        + TargetLang string
+
+    }
+    class File << (S,Aquamarine) >> {
+        + FileName string
+        + FilePath string
+
+    }
+    class Glossary << (S,Aquamarine) >> {
+        + Author string
+        + Comment string
+        + Name string
+
+    }
+    class Project << (S,Aquamarine) >> {
+        + Comment string
+        + Deadline string
+        + Name string
+        + Progress float64
+        + SourceLang string
+        + TargetLang string
+
+    }
+    class Segment << (S,Aquamarine) >> {
+        + DocumentID string
+        + Finished bool
+        + SourceText string
+        + TargetText string
+
+    }
+    class Term << (S,Aquamarine) >> {
+        + DocumentID string
+        + SourceLang string
+        + SourceText string
+        + TargetLang string
+        + TargetText string
+
+    }
+    class TranslationMemory << (S,Aquamarine) >> {
+        + DocumentID string
+        + SourceText string
+        + TargetText string
+
+    }
+}
+"letstrans.BaseModel" *-- "letstrans.Document"
+"letstrans.BaseModel" *-- "letstrans.File"
+"letstrans.BaseModel" *-- "letstrans.Glossary"
+"letstrans.BaseModel" *-- "letstrans.Project"
+"letstrans.BaseModel" *-- "letstrans.Segment"
+"letstrans.BaseModel" *-- "letstrans.Term"
+"letstrans.BaseModel" *-- "letstrans.TranslationMemory"
+
+
+@enduml

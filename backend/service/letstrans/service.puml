@@ -1,0 +1,130 @@
+@startuml
+namespace letstrans {
+    class CommonResponse << (S,Aquamarine) >> {
+        + Code int
+        + Msg string
+        + Data <font color=blue>interface</font>{}
+
+    }
+    class Document << (S,Aquamarine) >> {
+        + ID string
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + SourceLang string
+        + TargetLang string
+        + Name string
+        + Progress float64
+        + FileType string
+        + Author string
+
+    }
+    class FileRecord << (S,Aquamarine) >> {
+        + ID uint
+        + FileName string
+        + FilePath string
+
+    }
+    class FileService << (S,Aquamarine) >> {
+        + UploadFile(file *multipart.FileHeader, destDir string) (FileRecord, error)
+
+    }
+    class Glossary << (S,Aquamarine) >> {
+        + ID string
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + Comment string
+        + Author string
+        + Name string
+
+    }
+    class GlossaryService << (S,Aquamarine) >> {
+        + GetGlossaries() ([]Glossary, error)
+        + CreateGlossary(comment string, author string, name string) (Glossary, error)
+        + GetGlossaryTerms(glossaryID string) (Glossary, []Term, error)
+        + UpdateTerm(termID string, term Term) (Glossary, []Term, error)
+        + CreateTerm(termID string, term Term) (Glossary, []Term, error)
+        + SuggestTerms(sourceText string) ([]Term, error)
+
+    }
+    class Project << (S,Aquamarine) >> {
+        + ID string
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + SourceLang string
+        + TargetLang string
+        + Name string
+        + Progress float64
+        + Deadline time.Time
+        + Comment string
+
+    }
+    class ProjectService << (S,Aquamarine) >> {
+        + CreateProject(project Project) (Project, error)
+        + GetProjects() ([]Project, error)
+        + GetProjectDetails(projectID string) (Project, []Document, error)
+        + UpdateProject(projectID string, project Project) (Project, error)
+        + DeleteProjects(projectIDs []string) error
+        + AddFilesToProject(projectID string, fileIDs []string) ([]Document, error)
+        + RemoveFilesFromProject(projectID string, fileIDs []string) error
+        + DownloadFiles(projectID string, documentIDs []string, fileType string) (string, error)
+
+    }
+    class Segment << (S,Aquamarine) >> {
+        + DocumentID string
+        + ID int
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + SourceText string
+        + TargetText string
+        + Finished bool
+
+    }
+    class ServiceGroup << (S,Aquamarine) >> {
+    }
+    class TMTrans << (S,Aquamarine) >> {
+        + DocumentID string
+        + ID string
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + SourceText string
+        + TargetText string
+        + Percentage int
+
+    }
+    class Term << (S,Aquamarine) >> {
+        + DocumentID string
+        + ID string
+        + CreatedAt time.Time
+        + UpdatedAt time.Time
+        + SourceLang string
+        + TargetLang string
+        + SourceText string
+        + TargetText string
+
+    }
+    class ThirdPartyService << (S,Aquamarine) >> {
+        + MachineTranslate(documentIDs []string, segmentIDs []string, engine string) (CommonResponse, error)
+        + GetSupportedEngines() (CommonResponse, error)
+
+    }
+    class TranslateBasisService << (S,Aquamarine) >> {
+        + GetSegments(documentID string) (Document, []Segment, error)
+        + UpdateSegment(documentID string, segmentID string, targetText string, finished bool) error
+        + GetSegmentSuggestions(documentID string, segmentID string) ([]TMTrans, []Term, error)
+
+    }
+    class TranslateMemoryService << (S,Aquamarine) >> {
+        + GetMemories() ([]TMTrans, error)
+        + SuggestMemories(sourceText string) ([]TMTrans, error)
+
+    }
+}
+'"letstrans.FileService" *-- "letstrans.ServiceGroup"
+'"letstrans.GlossaryService" *-- "letstrans.ServiceGroup"
+'"letstrans.ProjectService" *-- "letstrans.ServiceGroup"
+'"letstrans.ThirdPartyService" *-- "letstrans.ServiceGroup"
+'"letstrans.TranslateBasisService" *-- "letstrans.ServiceGroup"
+'"letstrans.TranslateMemoryService" *-- "letstrans.ServiceGroup"
+
+
+@enduml
