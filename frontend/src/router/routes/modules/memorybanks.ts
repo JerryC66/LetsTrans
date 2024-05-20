@@ -12,6 +12,19 @@ const DASHBOARD: AppRouteRecordRaw = {
     order: 0,
     showInMenu: true,
   },
+  children: [
+    {
+      path: '',
+      name: 'memorybankList',
+      component: () => import('@/views/memorybanks/index.vue'),
+      meta: {
+        locale: 'menu.memorybanks.list',
+        requiresAuth: true,
+        roles: ['*'],
+        showInMenu: true,
+      },
+    },
+  ],
 };
 
 export default DASHBOARD;

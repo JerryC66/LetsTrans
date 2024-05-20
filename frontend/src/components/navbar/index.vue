@@ -221,6 +221,10 @@
         return t('menu.projects.manageFiles');
       case 'translatePage':
         return t('navbar.projects.translatePage');
+      case 'grossaryList':
+        return t('menu.grossaries.management');
+      case 'memorybankList':
+        return t('menu.memorybanks.management');
       default:
         return t('menu.projects.management');
     }

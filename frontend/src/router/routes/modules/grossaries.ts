@@ -12,6 +12,19 @@ const DASHBOARD: AppRouteRecordRaw = {
     order: 0,
     showInMenu: true,
   },
+  children: [
+    {
+      path: '',
+      name: 'grossaryList',
+      component: () => import('@/views/glossaries/index.vue'),
+      meta: {
+        locale: 'menu.grossaries.list',
+        requiresAuth: true,
+        roles: ['*'],
+        showInMenu: true,
+      },
+    },
+  ],
 };
 
 export default DASHBOARD;
