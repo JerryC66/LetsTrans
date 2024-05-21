@@ -53,7 +53,7 @@ system:
   env: local # 修改为public可以关闭路由日志输出
   addr: 8888
   db-type: pgsql
-  oss-type: qiniu # 控制 oss 选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
+  oss-type: local # 控制 oss 选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
   use-redis: false # 使用redis
   use-mongo: false     # 使用mongo
   use-multipoint: false
