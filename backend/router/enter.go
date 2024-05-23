@@ -6,8 +6,8 @@ import (
 )
 
 type RouterGroup struct {
-	System system.RouterGroup
-	File   letstrans.RouterGroup
+	System    system.RouterGroup
+	LetsTrans letstrans.RouterGroup
 }
 
 var RouterGroupApp = new(RouterGroup)

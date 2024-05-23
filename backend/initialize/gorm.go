@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"github.com/firwoodlin/letstrans/global"
-	"github.com/firwoodlin/letstrans/model/example"
+	"github.com/firwoodlin/letstrans/model/letstrans"
 	"github.com/firwoodlin/letstrans/model/system"
 	"os"
 
@@ -40,10 +40,13 @@ func RegisterTables() {
 		system.Condition{},
 		system.JoinTemplate{},
 
-		example.ExaFile{},
-		example.ExaCustomer{},
-		example.ExaFileChunk{},
-		example.ExaFileUploadAndDownload{},
+		//example.ExaFile{},
+		//example.ExaCustomer{},
+		//example.ExaFileChunk{},
+		//example.ExaFileUploadAndDownload{},
+		letstrans.FileRecord{},
+		letstrans.Document{},
+		letstrans.Segment{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

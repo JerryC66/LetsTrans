@@ -1,80 +1,84 @@
 package letstrans
 
-import "time"
+import (
+	"github.com/firwoodlin/letstrans/global"
+	"github.com/firwoodlin/letstrans/model/letstrans"
+	"github.com/firwoodlin/letstrans/model/system"
+)
 
 // ProjectService 定义项目服务结构体
 type ProjectService struct{}
 
-// Project 定义项目结构体
-type Project struct {
-	ID         string    `json:"id"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
-	SourceLang string    `json:"source_lang"`
-	TargetLang string    `json:"target_lang"`
-	Name       string    `json:"name"`
-	Progress   float64   `json:"progress"`
-	Deadline   time.Time `json:"deadline"`
-	Comment    string    `json:"comment"`
+func (p *ProjectService) CreateProject(req letstrans.Project) (proj letstrans.Project, err error) {
+	err = global.GVA_DB.Model(&letstrans.Project{}).Create(&req).Error
+	return req, nil
 }
 
-// Document 定义文档结构体
-type Document struct {
-	ID         string    `json:"id"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
-	SourceLang string    `json:"source_lang"`
-	TargetLang string    `json:"target_lang"`
-	Name       string    `json:"name"`
-	Progress   float64   `json:"progress"`
-	FileType   string    `json:"filetype"`
-	Author     string    `json:"author"`
+func (p *ProjectService) GetProjectList(userID uint) (projects []letstrans.Project, err error) {
+	err = global.GVA_DB.Model(&letstrans.Project{}).Where("user_id = ?", userID).Find(&projects).Error
+	return projects, err
 }
 
-// CreateProject 创建项目
-func (ps *ProjectService) CreateProject(project Project) (Project, error) {
-	// 实现创建项目的逻辑
-	return Project{}, nil
+func (p *ProjectService) GetProjectByID(projID uint) (project letstrans.Project, err error) {
+	err = global.GVA_DB.Model(&letstrans.Project{}).Where("id = ?", projID).First(&project).Error
+	return project, err
 }
 
-// GetProjects 获取项目列表
-func (ps *ProjectService) GetProjects() ([]Project, error) {
-	// 实现获取项目列表的逻辑
-	return []Project{}, nil
+// AddDocument 添加文档, 同时开启 doc to seg 任务
+func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (err error) {
+	file := letstrans.FileRecord{}
+	err = global.GVA_DB.Model(&letstrans.FileRecord{}).Where("id = ?", fileID).First(&file).Error
+	if err != nil {
+		return err
+	}
+	author := system.SysUser{}
+	err = global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", authorID).First(&author).Error
+	if err != nil {
+		return err
+	}
+	doc := letstrans.Document{
+		Name:      file.FileName,
+		Author:    author.NickName, // 昵称作为作者
+		AuthorID:  authorID,
+		Filetype:  file.FileType,
+		ProjectID: projID,
+		FilePath:  file.FilePath,
+		FileID:    fileID,
+	}
+	err = global.GVA_DB.Model(&letstrans.Document{}).Create(&doc).Error
+	if err != nil {
+		return err
+	}
+	// 开启 doc to seg 任务
+	segments, err := Doc2Seg(doc)
+	if err != nil {
+		return err
+	}
+	err = global.GVA_DB.Model(&letstrans.Segment{}).Create(&segments).Error
+	if err != nil {
+		return err
+	}
+	return err
 }
 
-// GetProjectDetails 获取项目的详细信息
-func (ps *ProjectService) GetProjectDetails(projectID string) (Project, []Document, error) {
-	// 实现获取项目详细信息的逻辑
-	return Project{}, []Document{}, nil
+// DeleteDocuments 删除文档
+func (p *ProjectService) DeleteDocuments(fileIDs []uint, projID uint) (err error) {
+	err = global.GVA_DB.Model(&letstrans.Document{}).Where("file_id in (?) AND project_id = ?", fileIDs, projID).Delete(&letstrans.Document{}).Error
+	return err
 }
 
-// UpdateProject 更新项目信息
-func (ps *ProjectService) UpdateProject(projectID string, project Project) (Project, error) {
-	// 实现更新项目信息的逻辑
-	return Project{}, nil
+func (p *ProjectService) DeleteProject(projIDs []uint) (err error) {
+	err = global.GVA_DB.Model(&letstrans.Project{}).Where("id in (?)", projIDs).Delete(&letstrans.Project{}).Error
+	return err
 }
 
-// DeleteProjects 批量删除项目
-func (ps *ProjectService) DeleteProjects(projectIDs []string) error {
-	// 实现批量删除项目的逻辑
-	return nil
-}
+//func (p *ProjectService) GetProjectDetail(projID uint) (res response.ProjectDetailRes, err error) {
+//	var project letstrans.Project
+//	var docs []letstrans.Document
+//	err = global.GVA_DB.Model(&letstrans.Project{}).
+//}
 
-// AddFilesToProject 向某一个项目中添加文件
-func (ps *ProjectService) AddFilesToProject(projectID string, fileIDs []string) ([]Document, error) {
-	// 实现向项目中添加文件的逻辑
-	return []Document{}, nil
-}
-
-// RemoveFilesFromProject 从项目中删除文件
-func (ps *ProjectService) RemoveFilesFromProject(projectID string, fileIDs []string) error {
-	// 实现从项目中删除文件的逻辑
-	return nil
-}
-
-// DownloadFiles 批量下载文件
-func (ps *ProjectService) DownloadFiles(projectID string, documentIDs []string, fileType string) (string, error) {
-	// 实现批量下载文件的逻辑
-	return "", nil
-}
+//func (p *ProjectService) UpdateProject(proj letstrans.Project) (err error) {
+//	err = global.GVA_DB.Model(&letstrans.Project{}).Where("id = ?", proj.ID).Updates(&proj).Error
+//	return err
+//}

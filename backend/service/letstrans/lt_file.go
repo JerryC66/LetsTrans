@@ -2,6 +2,7 @@ package letstrans
 
 import (
 	"fmt"
+	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
 	"github.com/firwoodlin/letstrans/utils/upload"
 	"mime/multipart"
@@ -22,6 +23,8 @@ func (fileService *FileService) UploadFile(header *multipart.FileHeader) (file l
 	f := letstrans.FileRecord{
 		FileName: header.Filename,
 		FilePath: filePath,
+		FileType: s[len(s)-1],
 	}
+	err = global.GVA_DB.Create(&f).Error
 	return f, nil
 }
