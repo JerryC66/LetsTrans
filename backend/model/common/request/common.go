@@ -17,7 +17,7 @@ func (r *GetById) Uint() uint {
 }
 
 type IdsReq struct {
-	Ids []int `json:"ids" form:"ids"`
+	Ids []uint `json:"ids" form:"ids"`
 }
 
 // GetAuthorityId Get role by id structure

@@ -37,6 +37,7 @@ func Routers() *gin.Engine {
 
 	//InstallPlugin(Router) // 安装插件
 	systemRouter := router.RouterGroupApp.System
+	letsTransRouter := router.RouterGroupApp.LetsTrans
 	//exampleRouter := router.RouterGroupApp.Example
 	// 如果想要不使用nginx代理前端网页，可以修改 web/.env.production 下的
 	// VUE_APP_BASE_API = /
@@ -65,7 +66,9 @@ func Routers() *gin.Engine {
 	}
 	{
 		//systemRouter.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权
-		systemRouter.InitInitRouter(PublicGroup) // 自动初始化相关
+		systemRouter.InitInitRouter(PublicGroup)    // 自动初始化相关
+		letsTransRouter.InitFileRouter(PublicGroup) // 文件上传下载功能
+		letsTransRouter.InitProjectRouter(PublicGroup)
 	}
 	//PrivateGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix)
 	//PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())

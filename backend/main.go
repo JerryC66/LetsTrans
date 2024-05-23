@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/firwoodlin/letstrans/core"
 	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/initialize"
@@ -34,5 +35,6 @@ func main() {
 		db, _ := global.GVA_DB.DB()
 		defer db.Close()
 	}
+	fmt.Println("成啦！")
 	core.RunWindowsServer()
 }
