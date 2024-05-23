@@ -10,6 +10,13 @@ export default mergeConfig(
       fs: {
         strict: true,
       },
+      proxy: {
+        '^/api': {
+          target: 'http://api.lt.firlin.cn:8098',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+      },
     },
     plugins: [
       eslint({

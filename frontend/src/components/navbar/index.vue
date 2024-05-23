@@ -173,9 +173,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, inject } from 'vue';
+  import { computed, ref } from 'vue';
   import { Message } from '@arco-design/web-vue';
-  import { useRouter, useRoute } from 'vue-router';
+  import { useRoute } from 'vue-router';
   import { useDark, useToggle, useFullscreen } from '@vueuse/core';
   import { useAppStore, useUserStore } from '@/store';
   import { LOCALE_OPTIONS } from '@/locale';
@@ -186,7 +186,6 @@
   import MessageBox from '../message-box/index.vue';
 
   const { t } = useI18n();
-  const router = useRouter();
   const route = useRoute();
   const appStore = useAppStore();
   const userStore = useUserStore();
@@ -262,7 +261,6 @@
     const res = await userStore.switchRoles();
     Message.success(res as string);
   };
-  const toggleDrawerMenu = inject('toggleDrawerMenu') as () => void;
 </script>
 
 <style scoped lang="less">

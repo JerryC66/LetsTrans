@@ -1,25 +1,48 @@
-import { CommonRes } from './common_res';
-import axios from 'axios';
+import request from './_request';
+import { HttpRes } from '@/types/api';
 
-interface FileUploadData {
-  file_id: string;
+interface FileUploadResponse {
+  id: number;
   filename: string;
   filetype: string;
 }
-export function uploadFile(file: File): Promise<CommonRes<FileUploadData>> {
-  return axios.post('/files');
-}
 
-export function addFileToProject(
-  project_id: string,
-  file_id: string
-): Promise<CommonRes<{}>> {
-  return axios.post('/projects/{project_id}/files');
-}
+export const uploadFile = (fileData: FormData) => {
+  return request({
+    url: '/files',
+    method: 'POST',
+    data: fileData,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }) as Promise<HttpRes<FileUploadResponse>>;
+};
 
-export function deleteFileFromProject(
-  project_id: string,
-  file_ids: string[]
-): Promise<CommonRes<{}>> {
-  return axios.delete('/projects/{project_id}/files');
-}
+export const addFileToProject = (project_id: number, file_ids: number[]) => {
+  return request({
+    url: '/projects/{project_id}/files',
+    method: 'POST',
+    data: { ids: file_ids },
+  }) as Promise<HttpRes<any>>;
+};
+
+export const deleteFileFromProject = (
+  project_id: number,
+  file_ids: number[]
+) => {
+  return request({
+    url: '/projects/{project_id}/files',
+    method: 'DELETE',
+    data: { ids: file_ids },
+  }) as Promise<HttpRes<any>>;
+};
+
+export const downloadFiles = (
+  project_id: number,
+  document_ids: number[],
+  type: 'origin' | 'translated'
+) => {
+  return request({
+    url: `/projects/${project_id}/files`,
+    method: 'GET',
+    data: { ids: document_ids, type },
+  }) as Promise<HttpRes<any>>;
+};

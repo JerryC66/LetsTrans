@@ -1,17 +1,38 @@
-import { CommonRes } from './common_res';
-import { Project, Document } from './model';
-import axios from 'axios';
+import request from './_request';
+import { HttpRes } from '@/types/api';
 
-export function createProject(
-  projectData: Project
-): Promise<CommonRes<Project>> {
-  return axios.post('/projects');
-}
+export const getProjects = () => {
+  return request({
+    url: '/projects',
+    method: 'GET',
+  }) as Promise<HttpRes<any[]>>;
+};
 
-export function getProjects(): Promise<CommonRes<Project[]>> {
-  return axios.get('/projects');
-}
+export const createProject = (data: {
+  source_lang: string;
+  target_lang: string;
+  name: string;
+  deadline: string;
+  comment: string;
+}) => {
+  return request({
+    url: '/projects',
+    method: 'POST',
+    data,
+  }) as Promise<HttpRes<any>>;
+};
 
-export function deleteProjects(project_ids: string[]): Promise<CommonRes<{}>> {
-  return axios.delete('/projects');
-}
+export const deleteProject = (project_ids: number[]) => {
+  return request({
+    url: '/projects',
+    method: 'DELETE',
+    data: { ids: project_ids },
+  }) as Promise<HttpRes<any>>;
+};
+
+export const getProjectDetail = (project_id: number) => {
+  return request({
+    url: '/projects/{project_id}',
+    method: 'GET',
+  }) as Promise<HttpRes<any>>;
+};

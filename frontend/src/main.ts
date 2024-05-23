@@ -13,7 +13,6 @@ import App from './App.vue';
 // https://arco.design/docs/designlab/use-theme-package
 import '@/assets/style/global.less';
 import '@/assets/style/tailwind.css';
-import '@/api/interceptor';
 
 const app = createApp(App);
 
