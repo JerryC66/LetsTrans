@@ -1,36 +1,27 @@
 package letstrans
 
 import (
-	"bufio"
+	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
-	"os"
 )
 
 type SegmentService struct{}
 
-// Doc2Seg Document to Segments
-func Doc2Seg(doc letstrans.Document) ([]letstrans.Segment, error) {
-	// 从文档中提取段落
-	segments := []letstrans.Segment{}
-	filePath := doc.FilePath
-	// 1. 读取文档
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
+func (s *SegmentService) GetSegmentList(docID uint) (segments []letstrans.Segment, err error) {
+	err = global.GVA_DB.Model(&letstrans.Segment{}).Where("document_id = ?", docID).Find(&segments).Order("id ASC").Error
+	return segments, err
+}
+
+func (s *SegmentService) UpdateSegment(segID uint, seg letstrans.Segment) (err error) {
+	// 注意此处对于空字段的处理
+	vals := map[string]interface{}{}
+	if seg.Finished != nil {
+		vals["finished"] = seg.Finished
 	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		segments = append(segments,
-			letstrans.Segment{
-				SourceText: scanner.Text(),
-				DocumentID: doc.ID,
-			})
+	if seg.TargetText != "" {
+		vals["target_text"] = seg.TargetText
 	}
-	//global.GVA_DB.Model(&letstrans.Segment{}).Save(&segments)
-	//return lines, scanner.Err()
-	// 2. 分割文档
-	// 3. 生成段落
-	// 4. 返回段落
-	return segments, nil
+
+	err = global.GVA_DB.Model(&letstrans.Segment{}).Where("id= ?", segID).Updates(&vals).Error
+	return err
 }

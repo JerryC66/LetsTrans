@@ -4,6 +4,7 @@ import (
 	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
 	"github.com/firwoodlin/letstrans/model/system"
+	"github.com/firwoodlin/letstrans/utils"
 )
 
 // ProjectService 定义项目服务结构体
@@ -50,7 +51,7 @@ func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (e
 		return err
 	}
 	// 开启 doc to seg 任务
-	segments, err := Doc2Seg(doc)
+	segments, err := utils.Doc2Seg(doc)
 	if err != nil {
 		return err
 	}
