@@ -3,9 +3,10 @@ package letstrans
 // Glossary
 type Glossary struct {
 	BaseModel
-	// 作者昵称
-	Author  string `json:"author"`
-	Comment string `json:"comment"`
-	// 术语库名称
-	Name string `json:"name"`
+	Name       string `json:"name"`   // 术语库名称
+	Author     string `json:"author"` // 作者昵称
+	Comment    string `json:"comment"`
+	SourceLang string `json:"source_lang"`
+	TargetLang string `json:"target_lang"`
+	AuthorID   uint   `json:"author_id"`
 }

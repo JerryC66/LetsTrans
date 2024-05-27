@@ -60,6 +60,7 @@ func Routers() *gin.Engine {
 		letsTransRouter.InitFileRouter(PublicGroup) // 文件上传下载功能
 		letsTransRouter.InitProjectRouter(PublicGroup)
 		letsTransRouter.InitSegmentRouter(PublicGroup)
+		letsTransRouter.InitGlossaryRouter(PublicGroup)
 	}
 	//PrivateGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix)
 	//PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())

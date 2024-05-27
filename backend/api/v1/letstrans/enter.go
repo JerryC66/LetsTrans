@@ -6,6 +6,7 @@ type ApiGroup struct {
 	FileUploadApi
 	ProjectApi
 	SegmentApi
+	GlossaryApi
 }
 
 var (
@@ -13,4 +14,5 @@ var (
 	projectService  letstrans.ProjectService
 	documentService letstrans.DocumentService
 	segmentService  letstrans.SegmentService
+	glossaryService letstrans.GlossaryService
 )

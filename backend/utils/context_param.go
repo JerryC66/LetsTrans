@@ -13,5 +13,9 @@ func Param2Uint(c *gin.Context, key string) uint {
 			return uint(valUint)
 		}
 	}
+	//else {
+	//	response.FailWithMessage("invalid param "+key, c)
+	//	c.Abort()
+	//}
 	return 0
 }

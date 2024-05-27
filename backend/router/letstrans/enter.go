@@ -4,4 +4,5 @@ type RouterGroup struct {
 	FileRouter
 	ProjectRouter
 	SegmentRouter
+	GlossaryRouter
 }
