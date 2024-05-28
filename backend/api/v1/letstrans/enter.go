@@ -1,9 +1,12 @@
 package letstrans
 
-import "github.com/firwoodlin/letstrans/service/letstrans"
+import (
+	"github.com/firwoodlin/letstrans/service/letstrans"
+	"github.com/firwoodlin/letstrans/service/system"
+)
 
 type ApiGroup struct {
-	FileUploadApi
+	FileOpApi
 	ProjectApi
 	SegmentApi
 	GlossaryApi
@@ -15,4 +18,5 @@ var (
 	documentService letstrans.DocumentService
 	segmentService  letstrans.SegmentService
 	glossaryService letstrans.GlossaryService
+	userService     system.UserService
 )

@@ -9,9 +9,9 @@ import (
 	"go.uber.org/zap"
 )
 
-type FileUploadApi struct{}
+type FileOpApi struct{}
 
-func (f *FileUploadApi) UploadFile(c *gin.Context) {
+func (f *FileOpApi) UploadFile(c *gin.Context) {
 	var file letstrans.FileRecord
 	_, header, err := c.Request.FormFile("file")
 	if err != nil {
@@ -27,3 +27,12 @@ func (f *FileUploadApi) UploadFile(c *gin.Context) {
 	}
 	response.OkWithDetailed(letRes.ExaFileResponse{File: file}, "上传成功", c)
 }
+
+//func (f *FileOpApi) DownloadFile(c *gin.Context) {
+//	var file request.FileDownloadReq
+//	_ = c.ShouldBindJSON(&file)
+//	if err := fileService.(file, c); err != nil {
+//		global.GVA_LOG.Error("下载失败!", zap.Error(err))
+//		response.FailWithMessage("下载失败", c)
+//	}
+//}

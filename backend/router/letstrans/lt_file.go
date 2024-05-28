@@ -9,7 +9,7 @@ type FileRouter struct{}
 
 func (f *FileRouter) InitFileRouter(Router *gin.RouterGroup) (R gin.IRoutes) {
 	fileRouter := Router.Group("files")
-	fileApi := v1.ApiGroupApp.LetsTransApiGroup.FileUploadApi
+	fileApi := v1.ApiGroupApp.LetsTransApiGroup.FileOpApi
 	{
 		fileRouter.POST("", fileApi.UploadFile)
 	}
