@@ -27,6 +27,7 @@ export default {
 
   'project.file.upload': '上传文件',
   'project.file.name': '文件名称',
+  'project.file.progress': '翻译进度',
   'project.file.type': '文件类型',
   'project.file.date': '创建日期',
   'project.file.creater': '创建者',

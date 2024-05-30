@@ -1,5 +1,5 @@
-import request from './_request';
 import { HttpRes } from '@/types/api';
+import request from './_request';
 
 interface FileUploadResponse {
   id: number;
@@ -16,33 +16,29 @@ export const uploadFile = (fileData: FormData) => {
   }) as Promise<HttpRes<FileUploadResponse>>;
 };
 
-export const addFileToProject = (project_id: number, file_ids: number[]) => {
+export const addFileToProject = (projectId: number) => {
   return request({
-    url: '/projects/{project_id}/files',
+    url: `/projects/${projectId}/files`,
     method: 'POST',
-    data: { ids: file_ids },
   }) as Promise<HttpRes<any>>;
 };
 
-export const deleteFileFromProject = (
-  project_id: number,
-  file_ids: number[]
-) => {
+export const deleteFileFromProject = (projectId: number, fileIds: number[]) => {
   return request({
-    url: '/projects/{project_id}/files',
+    url: `/projects/${projectId}/files`,
     method: 'DELETE',
-    data: { ids: file_ids },
+    data: { ids: fileIds },
   }) as Promise<HttpRes<any>>;
 };
 
 export const downloadFiles = (
-  project_id: number,
-  document_ids: number[],
+  projectId: number,
+  documentIds: number[],
   type: 'origin' | 'translated'
 ) => {
   return request({
-    url: `/projects/${project_id}/files`,
+    url: `/projects/${projectId}/files`,
     method: 'GET',
-    data: { ids: document_ids, type },
+    data: { ids: documentIds, type },
   }) as Promise<HttpRes<any>>;
 };

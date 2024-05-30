@@ -12,7 +12,7 @@ export default mergeConfig(
       },
       proxy: {
         '^/api': {
-          target: 'http://api.lt.firlin.cn:8098',
+          target: 'http://api.lt.firlin.cn',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },

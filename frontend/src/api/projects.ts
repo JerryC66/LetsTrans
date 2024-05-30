@@ -1,5 +1,5 @@
-import request from './_request';
 import { HttpRes } from '@/types/api';
+import request from './_request';
 
 export const getProjects = () => {
   return request({
@@ -22,17 +22,17 @@ export const createProject = (data: {
   }) as Promise<HttpRes<any>>;
 };
 
-export const deleteProject = (project_ids: number[]) => {
+export const deleteProject = (projectIds: number[]) => {
   return request({
     url: '/projects',
     method: 'DELETE',
-    data: { ids: project_ids },
+    data: { ids: projectIds },
   }) as Promise<HttpRes<any>>;
 };
 
-export const getProjectDetail = (project_id: number) => {
+export const getProjectDetail = (projectId: number) => {
   return request({
-    url: '/projects/{project_id}',
+    url: `/projects/${projectId}`,
     method: 'GET',
   }) as Promise<HttpRes<any>>;
 };

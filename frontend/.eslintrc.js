@@ -52,6 +52,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 1,
     '@typescript-eslint/no-empty-function': 1,
     '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-inferrable-types': 0,
     'import/extensions': [
       2,
       'ignorePackages',
@@ -66,5 +67,6 @@ module.exports = {
     'no-param-reassign': 0,
     'prefer-regex-literals': 0,
     'import/no-extraneous-dependencies': 0,
+    'import/prefer-default-export': 0,
   },
 };

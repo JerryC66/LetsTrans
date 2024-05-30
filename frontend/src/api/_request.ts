@@ -9,7 +9,7 @@ import { BASE_URL } from '@/constants';
 
 export default function request<T = object>(config: AxiosRequestConfig) {
   const instance: AxiosInstance = axios.create({
-    baseURL: BASE_URL,
+    baseURL: 'https://api.lt.firlin.cn',
     timeout: 60000,
     withCredentials: true,
   });

@@ -28,9 +28,7 @@
             <div class="left-side">
               <div class="filebox">
                 <icon-file class="icon-file" />
-                <a-typography-text class="project-name">{{
-                  $t('project.name')
-                }}</a-typography-text>
+                <a-typography-text>{{ $t('project.name') }}</a-typography-text>
               </div>
               <div class="progress">
                 <a-typography-text>{{
@@ -55,7 +53,7 @@
                 }}</a-typography-text>
               </div>
               <div class="icons">
-                <div><icon-download /></div>
+                <div class="download"><icon-download /></div>
                 <div class="delete"><icon-delete /></div>
               </div>
             </div>
@@ -63,8 +61,8 @@
         </template>
         <a-list-item
           v-for="project in projects"
-          :key="project.projectId"
-          @dblclick="gotoFileManage(project.projectId)"
+          :key="project.id"
+          @dblclick="gotoFileManage(project.id)"
         >
           <wrapper
             class="list-item"
@@ -73,32 +71,53 @@
             }"
           >
             <div class="left-side">
-              <div class="filebox">
+              <div class="filebox flex">
                 <icon-file class="icon-file" />
-                <a-typography-text class="project-name">{{
-                  project.name
-                }}</a-typography-text>
+                <div class="project-name">
+                  <a-typography-text ellipsis>{{
+                    project.name
+                  }}</a-typography-text>
+                </div>
               </div>
               <div class="progress">
                 <a-progress
-                  :percent="0.6"
+                  :percent="project.progress"
                   :style="{ width: '100%' }"
                 ></a-progress>
               </div>
               <div class="language">
-                <a-typography-text>{{ project.language }}</a-typography-text>
+                <a-typography-text ellipsis
+                  >{{ project.source_lang }} >
+                  {{ project.target_lang }}</a-typography-text
+                >
               </div>
               <div class="source">
-                <a-typography-text>{{ project.source }}</a-typography-text>
+                <a-typography-text ellipsis>{{
+                  project.comment
+                }}</a-typography-text>
               </div>
             </div>
             <div class="right-side">
               <div class="deadline">
-                <a-typography-text>{{ project.deadline }}</a-typography-text>
+                <a-typography-text>{{
+                  convertToBasicDateFormat(project.deadline)
+                }}</a-typography-text>
               </div>
               <div class="icons">
-                <div><icon-download /></div>
-                <div class="delete"><icon-delete /></div>
+                <div class="download">
+                  <a-popconfirm content="conform to download this project?">
+                    <icon-download />
+                  </a-popconfirm>
+                </div>
+                <div class="delete">
+                  <a-popconfirm
+                    @ok="handleDelete([project.id])"
+                    content="conform to delete this project?"
+                    type="error"
+                  >
+                    <icon-delete />
+                  </a-popconfirm>
+                </div>
               </div>
             </div>
           </wrapper>
@@ -110,38 +129,53 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
+  import { computed, ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { useAppStore } from '@/store';
-
   import CreateProjectModal from '@/views/projects/components/create-project-modal/index.vue';
+  import { getProjects, deleteProject } from '@/api/projects';
 
   const appStore = useAppStore();
   const router = useRouter();
-
   const visible = ref(false);
   const theme = computed(() => {
     return appStore.theme;
   });
+  const projects = ref<any>([]);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await getProjects();
+      if (response && response.data) {
+        projects.value = response.data;
+        console.log(projects);
+      }
+    } catch (error) {
+      console.error('Failed to fetch projects:', error);
+    }
+  };
+
+  const handleDelete = async (projectId: number[]) => {
+    try {
+      await deleteProject(projectId);
+      fetchProjects();
+    } catch (error) {
+      console.error('Failed to delete project:', error);
+    }
+  };
+
+  onMounted(fetchProjects);
 
   const gotoFileManage = (projectId: any) => {
-    console.log('enter funtion gotoFileManage');
     router.push({
       name: 'manageFiles',
       params: { projectId },
     });
   };
 
-  const projects = [
-    {
-      projectId: 111,
-      name: '项目1',
-      progress: '',
-      language: 'en -> zh',
-      source: '光明出版社',
-      deadline: '2024.6.1',
-    },
-  ];
+  const convertToBasicDateFormat = (isoDateString) => {
+    return isoDateString.split('T')[0];
+  };
 </script>
 
 <style scoped>
@@ -187,6 +221,7 @@
     .filebox {
       flex: 1;
       display: flex;
+      align-items: center;
 
       .icon-file {
         flex: 1;
@@ -194,6 +229,7 @@
 
       .project-name {
         flex: 2;
+        padding-top: 14px;
       }
     }
 
@@ -201,16 +237,21 @@
       flex: 2;
       display: flex;
       justify-content: center;
+      margin: 0 20px 0 25px;
     }
 
     .language {
       flex: 1;
       display: flex;
       justify-content: center;
+      margin: 0 5px;
+      padding-top: 14px;
     }
 
     .source {
       flex: 1;
+      padding: 0 5px;
+      padding-top: 14px;
     }
   }
 

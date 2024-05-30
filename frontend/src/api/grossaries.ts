@@ -1,5 +1,5 @@
-import request from './_request';
 import { HttpRes } from '@/types/api';
+import request from './_request';
 
 export const getGlossaries = () => {
   return request({

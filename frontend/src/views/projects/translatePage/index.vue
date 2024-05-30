@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="container"
-    :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }"
-  >
+  <div class="container" :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }">
     <nav>
       <div class="row1">
         <div class="icons-bar">
@@ -36,26 +33,25 @@
       </div>
       <div class="row2">
         <div class="search-bar">
-          <a-input-search
-            size="large"
-            :style="{ width: '750px' }"
-            placeholder="Please enter something"
-            search-button
-          />
+          <a-input-search size="large" :style="{ width: '750px' }" placeholder="Please enter something" search-button />
         </div>
         <div class="btn-group">
           <div class="download">
-            <icon-download size="18" />
+            <a-button type="primary" size="large">
+              <template #icon>
+                <icon-download size="large" />
+              </template>
+            </a-button>
           </div>
           <div class="import">
             <a-button size="large" type="primary" shape="round">{{
               $t('translate.addterm')
-            }}</a-button>
+              }}</a-button>
           </div>
           <div class="pre-trans">
             <a-button size="large" type="primary" shape="round">{{
               $t('translate.pretrans')
-            }}</a-button>
+              }}</a-button>
           </div>
         </div>
       </div>
@@ -64,10 +60,18 @@
       <div class="left-side">
         <div class="block">
           <div class="left-block">
-            <a-textarea> </a-textarea>
+            <a-textarea></a-textarea>
           </div>
           <div class="right-block">
             <a-textarea></a-textarea>
+          </div>
+          <div class="confirm-btn">
+            <a-button type="primary" size="large">
+              <template #icon>
+                <icon-check size="large" />
+              </template>
+            </a-button>
+
           </div>
         </div>
       </div>
@@ -82,14 +86,37 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue';
+  import { computed, ref, reactive, onMounted } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import { useAppStore } from '@/store';
-
+  import { getDocumentSegments } from '@/api/documents';
+  
   const appStore = useAppStore();
+  const router = useRouter();
+  const route = useRoute();
 
   const theme = computed(() => {
     return appStore.theme;
   });
+
+  const blocks = ref<any>([]);
+  const document = ref<any>();
+
+  const fetchSegments = async () => {
+    try {
+      const response = await getDocumentSegments(Number(route.params.fileId));
+      console.log('response:', response);
+      if (response && response.data) {
+        blocks.value = response.data.segments;
+        document.value = response.data.document;
+      } 
+    } catch (error) {
+      console.log('Fail to fetch segments', error);
+    }
+  }
+
+  onMounted(fetchSegments);
+
 </script>
 
 <style scoped>
@@ -179,12 +206,16 @@
       display: flex;
       margin-left: 50px;
       margin-right: 50px;
+
       .left-block {
         flex: 1;
         margin-right: 20px;
       }
       .right-block {
         flex: 1;
+      }
+      .confirm-btn {
+        margin-left: 25px;
       }
     }
   }

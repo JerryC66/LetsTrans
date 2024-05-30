@@ -4,7 +4,7 @@
     :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }"
   >
     <div class="project-title">
-      <a-typography-title :heading="4">Project X</a-typography-title>
+      <a-typography-title :heading="4">{{ projectName }}</a-typography-title>
     </div>
 
     <nav>
@@ -41,14 +41,16 @@
           >
             <div class="left-side">
               <div class="filebox">
-                <icon-file class="icon-file" />
-                <a-typography-text class="file-name">{{
-                  $t('project.file.name')
-                }}</a-typography-text>
+                <div class="icon-file"><icon-file /></div>
+                <div
+                  ><a-typography-text class="file-name">{{
+                    $t('project.file.name')
+                  }}</a-typography-text></div
+                >
               </div>
               <div class="progress">
                 <a-typography-text>{{
-                  $t('project.progress')
+                  $t('project.file.progress')
                 }}</a-typography-text>
               </div>
               <div class="type">
@@ -63,9 +65,9 @@
               </div>
             </div>
             <div class="right-side">
-              <div class="deadline">
+              <div class="create_time">
                 <a-typography-text>{{
-                  $t('project.deadline')
+                  $t('project.file.date')
                 }}</a-typography-text>
               </div>
               <div class="icons">
@@ -76,9 +78,11 @@
           </wrapper>
         </template>
         <a-list-item
-          v-for="file in files"
-          :key="file.fileId"
-          @dblclick="gotoTranslatePage(route.params.projectId, file.fileId)"
+          v-for="document in documents"
+          :key="document.file_id"
+          @dblclick="
+            gotoTranslatePage(Number(route.params.projectId), document.id)
+          "
         >
           <wrapper
             class="list-item"
@@ -88,10 +92,12 @@
           >
             <div class="left-side">
               <div class="filebox">
-                <icon-file class="icon-file" />
-                <a-typography-text class="file-name">{{
-                  file.name
-                }}</a-typography-text>
+                <div class="icon-file"><icon-file /></div>
+                <div class="file-name"
+                  ><a-typography-text ellipsis>{{
+                    document.name
+                  }}</a-typography-text></div
+                >
               </div>
               <div class="progress">
                 <a-progress
@@ -100,19 +106,38 @@
                 ></a-progress>
               </div>
               <div class="type">
-                <a-typography-text>{{ file.type }}</a-typography-text>
+                <a-typography-text>{{ document.filetype }}</a-typography-text>
               </div>
               <div class="creater">
-                <a-typography-text>{{ file.creater }}</a-typography-text>
+                <a-typography-text>{{ document.author }}</a-typography-text>
               </div>
             </div>
             <div class="right-side">
-              <div class="deadline">
-                <a-typography-text>{{ file.deadline }}</a-typography-text>
+              <div class="create_time">
+                <a-typography-text>{{
+                  convertToBasicDateFormat(document.CreatedAt)
+                }}</a-typography-text>
               </div>
               <div class="icons">
-                <div><icon-download /></div>
-                <div class="delete"><icon-delete /></div>
+                <div class="download">
+                  <a-popconfirm content="conform to download this project?">
+                    <icon-download />
+                  </a-popconfirm>
+                </div>
+                <div class="delete">
+                  <a-popconfirm
+                    @ok="
+                      handleDelete(
+                        Number(route.params.projectId),
+                        document.file_id
+                      )
+                    "
+                    content="conform to delete this project?"
+                    type="error"
+                  >
+                    <icon-delete />
+                  </a-popconfirm>
+                </div>
               </div>
             </div>
           </wrapper>
@@ -124,11 +149,13 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
+  import { computed, ref, onMounted } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useAppStore } from '@/store';
 
   import UploadFileModal from '@/views/projects/components/upload-file-modal/index.vue';
+  import { getProjectDetail } from '@/api/projects';
+  import { deleteFileFromProject } from '@/api/files';
 
   const appStore = useAppStore();
   const router = useRouter();
@@ -138,24 +165,44 @@
   const theme = computed(() => {
     return appStore.theme;
   });
+  const documents = ref<any>([]);
+  const projectName = ref<string>();
 
-  const gotoTranslatePage = (projectId: any, fileId: any) => {
+  const fetchFiles = async () => {
+    try {
+      const response = await getProjectDetail(Number(route.params.projectId));
+      // console.log('response:', response);
+      if (response && response.data) {
+        documents.value = response.data.documents;
+        projectName.value = response.data.project.name;
+        console.log(documents);
+      }
+    } catch (error) {
+      console.log('Fail to fetch files', error);
+    }
+  };
+
+  const gotoTranslatePage = (projectId: number, fileId: number) => {
     router.push({
       name: 'translatePage',
       params: { projectId, fileId },
     });
   };
 
-  const files = [
-    {
-      fileId: 111,
-      name: '文件1',
-      progress: '',
-      type: 'doc',
-      creater: 'cc',
-      deadline: '2024.6.1',
-    },
-  ];
+  const handleDelete = async (projectId: number, fileIds: number[]) => {
+    try {
+      await deleteFileFromProject(projectId, fileIds);
+      fetchFiles();
+    } catch (error) {
+      console.error('Failed to delete document:', error);
+    }
+  };
+
+  onMounted(fetchFiles);
+
+  const convertToBasicDateFormat = (isoDateString) => {
+    return isoDateString.split('T')[0];
+  };
 </script>
 
 <style scoped>
@@ -217,6 +264,7 @@
     .filebox {
       flex: 1;
       display: flex;
+      align-items: center;
 
       .icon-file {
         flex: 1;
@@ -224,6 +272,7 @@
 
       .file-name {
         flex: 2;
+        padding-top: 12px;
       }
     }
 
@@ -231,6 +280,8 @@
       flex: 2;
       display: flex;
       justify-content: center;
+      padding: 0 10px;
+      margin-left: 25px;
     }
 
     .type {
