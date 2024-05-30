@@ -11,3 +11,9 @@ func (ds *DocumentService) GetDocumentsByProjID(projID uint) (docs []letstrans.D
 	err = global.GVA_DB.Model(&letstrans.Document{}).Where("project_id = ?", projID).Find(&docs).Error
 	return docs, err
 }
+
+func (ds *DocumentService) GetDocumentByID(docID uint) (doc letstrans.Document,
+	err error) {
+	err = global.GVA_DB.Model(&letstrans.Document{}).Where("id = ?", docID).First(&doc).Error
+	return doc, err
+}
