@@ -11,6 +11,8 @@ services:
       - GO111MODULE=on
       - GOPROXY=https://goproxy.cn,direct
       - CGO_ENABLED=0
+    env_file:
+      - .env
     depends_on:
       - doc-processor
       - deeplx
