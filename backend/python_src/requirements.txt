@@ -1,2 +1,4 @@
 python-pptx
+python-docx
 PyMuPDF
+flask

@@ -2,7 +2,7 @@ services:
   main-server:
     build:
       context: .
-      dockerfile: Dockerfile
+    #      dockerfile: Dockerfile
     ports:
       - "8098:8098"
     volumes:
@@ -11,7 +11,16 @@ services:
       - GO111MODULE=on
       - GOPROXY=https://goproxy.cn,direct
       - CGO_ENABLED=0
+    depends_on:
+      - doc-processor
   deeplx:
     image: ghcr.io/owo-network/deeplx:latest
     ports:
       - "1188:1188"
+  doc-processor:
+    build:
+      context: ./python_src
+    ports:
+      - "5000:5000"
+#    volumes:
+#      - ./python_src:/app

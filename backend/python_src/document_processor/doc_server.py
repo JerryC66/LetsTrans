@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
 import json
-import grpc
-from concurrent import futures
-import document_processor_pb2
-import document_processor_pb2_grpc
+from flask import Flask, request, jsonify, send_file
+from io import BytesIO
+from docx import Document
+from pptx import Presentation
+import fitz  # PyMuPDF
+
+app = Flask(__name__)
 
 
 class DocumentProcessor(ABC):
@@ -17,7 +20,9 @@ class DocumentProcessor(ABC):
 
 
 class TxtDocumentProcessor(DocumentProcessor):
-    def read_document(self, content: str) -> list:
+    def read_document(self, content: BytesIO) -> list:
+        content = content.getvalue().decode('utf-8')
+
         segments = []
         segment_id = 0
         for line in content.splitlines():
@@ -30,24 +35,16 @@ class TxtDocumentProcessor(DocumentProcessor):
             segment_id += 1
         return segments
 
-    def modify_document(self, content: str, replacements: list) -> str:
-        lines = []
-        segment_id = 0
-        for line in content.splitlines():
-            if line.strip() == "":
-                lines.append(line)
-                continue
-            modified_line = replacements[segment_id].get('translated_text', line.strip())
-            lines.append(modified_line)
-            segment_id += 1
-        return "\n".join(lines)
+    def modify_document(self, content: BytesIO, replacements: list) -> BytesIO:
+        sorted_content = sorted(replacements, key=lambda x: x['id'])
+        lines = [item['translated_text'] for item in sorted_content]
+        modified_content = "\n".join(lines)
+        return BytesIO(modified_content.encode('utf-8'))
 
 
 class DocxDocumentProcessor(DocumentProcessor):
-    def read_document(self, content: str) -> list:
-        from docx import Document
-        from io import BytesIO
-        doc = Document(BytesIO(content.encode('utf-8')))
+    def read_document(self, content: BytesIO) -> list:
+        doc = Document(content)
         segments = []
         segment_id = 0
         for paragraph in doc.paragraphs:
@@ -60,10 +57,8 @@ class DocxDocumentProcessor(DocumentProcessor):
             segment_id += 1
         return segments
 
-    def modify_document(self, content: str, replacements: list) -> str:
-        from docx import Document
-        from io import BytesIO
-        doc = Document(BytesIO(content.encode('utf-8')))
+    def modify_document(self, content: BytesIO, replacements: list) -> BytesIO:
+        doc = Document(content)
         segment_id = 0
         for paragraph in doc.paragraphs:
             if paragraph.text.strip() == "":
@@ -72,14 +67,14 @@ class DocxDocumentProcessor(DocumentProcessor):
             segment_id += 1
         output = BytesIO()
         doc.save(output)
-        return output.getvalue().decode('utf-8')
+        output.seek(0)  # 将指针移回开头以便后续读取
+
+        return output
 
 
 class PptxDocumentProcessor(DocumentProcessor):
-    def read_document(self, content: str) -> list:
-        from pptx import Presentation
-        from io import BytesIO
-        prs = Presentation(BytesIO(content.encode('utf-8')))
+    def read_document(self, content: BytesIO) -> list:
+        prs = Presentation(content)
         segments = []
         segment_id = 0
         for slide in prs.slides:
@@ -97,10 +92,8 @@ class PptxDocumentProcessor(DocumentProcessor):
                 segment_id += 1
         return segments
 
-    def modify_document(self, content: str, replacements: list) -> str:
-        from pptx import Presentation
-        from io import BytesIO
-        prs = Presentation(BytesIO(content.encode('utf-8')))
+    def modify_document(self, content: BytesIO, replacements: list) -> BytesIO:
+        prs = Presentation(content)
         segment_id = 0
         for slide in prs.slides:
             for shape in slide.shapes:
@@ -113,14 +106,14 @@ class PptxDocumentProcessor(DocumentProcessor):
                 segment_id += 1
         output = BytesIO()
         prs.save(output)
-        return output.getvalue().decode('utf-8')
+        output.seek(0)  # 将指针移回开头以便后续读取
+        prs.save('./uu.pptx')
+        return output
 
 
 class PdfDocumentProcessor(DocumentProcessor):
     def read_document(self, content: str) -> list:
-        import fitz  # PyMuPDF
-        from io import BytesIO
-        doc = fitz.open("pdf", BytesIO(content.encode('utf-8')))
+        doc = fitz.open("pdf", content)
         segments = []
         segment_id = 0
         for page_num in range(len(doc)):
@@ -137,51 +130,63 @@ class PdfDocumentProcessor(DocumentProcessor):
                 segment_id += 1
         return segments
 
-    def modify_document(self, content: str, replacements: list) -> str:
+    def modify_document(self, content: str, replacements: list) -> BytesIO:
         lines = '\n'.join([item['translated_text'] for item in replacements])
-        return lines
+        return BytesIO(lines.encode('utf-8'))
 
 
-# gRPC 服务实现
-
-class DocumentProcessorServicer(document_processor_pb2_grpc.DocumentProcessorServicer):
-    def __init__(self):
-        self.processors = {
-            'txt': TxtDocumentProcessor(),
-            'docx': DocxDocumentProcessor(),
-            'pptx': PptxDocumentProcessor(),
-            'pdf': PdfDocumentProcessor()
-        }
-
-    def ProcessDocument(self, request, context):
-        processor = self.processors.get(request.file_type)
-        if not processor:
-            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-            context.set_details('Unsupported file type')
-            return document_processor_pb2.ProcessDocumentResponse()
-
-        segments = processor.read_document(request.content)
-        return document_processor_pb2.ProcessDocumentResponse(segments=json.dumps(segments))
-
-    def ModifyDocument(self, request, context):
-        processor = self.processors.get(request.file_type)
-        if not processor:
-            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-            context.set_details('Unsupported file type')
-            return document_processor_pb2.ModifyDocumentResponse()
-
-        replacements = json.loads(request.replacements)
-        modified_content = processor.modify_document(request.content, replacements)
-        return document_processor_pb2.ModifyDocumentResponse(modified_content=modified_content)
+processors = {
+    'txt': TxtDocumentProcessor(),
+    'docx': DocxDocumentProcessor(),
+    'pptx': PptxDocumentProcessor(),
+    'pdf': PdfDocumentProcessor()
+}
 
 
-def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    document_processor_pb2_grpc.add_DocumentProcessorServicer_to_server(DocumentProcessorServicer(), server)
-    server.add_insecure_port('[::]:50051')
-    server.start()
-    server.wait_for_termination()
+@app.route('/process_document', methods=['POST'])
+def process_document():
+    file = request.files['file']
+    file_type = file.filename.split('.')[-1]
+
+    processor = processors.get(file_type)
+    if not processor:
+        return jsonify({'error': 'Unsupported file type'}), 400
+
+    # file.save('./u.pptx')
+    content = BytesIO(file.read())
+    segments = processor.read_document(content)
+    return jsonify({'segments': segments})
+
+
+@app.route('/modify_document', methods=['POST'])
+def modify_document():
+    file = request.files['file']
+    file_type = file.filename.split('.')[-1]
+    replacements = json.loads(request.form['replacements'])
+
+    processor = processors.get(file_type)
+    if not processor:
+        return jsonify({'error': 'Unsupported file type'}), 400
+
+    content = BytesIO(file.read())
+    modified_content = processor.modify_document(content, replacements)
+    if file_type == 'pdf':
+        response = send_file(modified_content, as_attachment=True, download_name=f'modified_{file.filename}.txt')
+    else:
+        response = send_file(modified_content, as_attachment=True, download_name=f'modified_{file.filename}')
+    return response
 
 
 if __name__ == '__main__':
-    serve()
+    # 打印当前运行目录
+    import os
+    current_directory = os.getcwd()
+    print(f'Current directory: {current_directory}')
+
+    # 打印当前文件夹下的文件（递归）
+    print('Files in current directory (recursive):')
+    for root, dirs, files in os.walk(current_directory):
+        for file in files:
+            print(os.path.join(root, file))
+
+    app.run(host='0.0.0.0', port=5000)
