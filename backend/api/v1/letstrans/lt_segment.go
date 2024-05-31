@@ -31,7 +31,7 @@ func (a *SegmentApi) GetSegmentList(c *gin.Context) {
 	}
 	response.OkWithData(gin.H{
 		"segments": segments,
-		"doc":      doc,
+		"document": doc,
 	}, c)
 }
 

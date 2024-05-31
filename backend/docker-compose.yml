@@ -1,0 +1,17 @@
+services:
+  main-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8098:8098"
+    volumes:
+      - ./uploads:/uploads
+    environment:
+      - GO111MODULE=on
+      - GOPROXY=https://goproxy.cn,direct
+      - CGO_ENABLED=0
+  deeplx:
+    image: ghcr.io/owo-network/deeplx:latest
+    ports:
+      - "1188:1188"

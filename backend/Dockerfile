@@ -24,12 +24,13 @@ WORKDIR /
 
 # 从构建器镜像中复制二进制文件到基础镜像
 COPY --from=builder /app/server .
+COPY --from=builder /app/config.yaml .
 
 # 添加运行时所需的任何额外库
 RUN apk --no-cache add ca-certificates
 
 # 声明运行时容器提供服务的端口
-EXPOSE 8080
+EXPOSE 8098
 
 # 指定容器启动时运行的命令
 ENTRYPOINT ./server

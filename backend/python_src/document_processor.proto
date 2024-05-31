@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package documentprocessor;
+
+service DocumentProcessor {
+    rpc ProcessDocument (ProcessDocumentRequest) returns (ProcessDocumentResponse);
+    rpc ModifyDocument (ModifyDocumentRequest) returns (ModifyDocumentResponse);
+}
+
+message ProcessDocumentRequest {
+    string content = 1;
+    string file_type = 2;
+}
+
+message ProcessDocumentResponse {
+    string segments = 1;
+}
+
+message ModifyDocumentRequest {
+    string content = 1;
+    string replacements = 2;
+    string file_type = 3;
+}
+
+message ModifyDocumentResponse {
+    string modified_content = 1;
+}
