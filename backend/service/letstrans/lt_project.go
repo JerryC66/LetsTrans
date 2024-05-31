@@ -1,10 +1,13 @@
 package letstrans
 
 import (
+	"errors"
 	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
 	"github.com/firwoodlin/letstrans/model/system"
 	"github.com/firwoodlin/letstrans/utils"
+	"github.com/firwoodlin/letstrans/utils/document"
+	"time"
 )
 
 // ProjectService 定义项目服务结构体
@@ -26,18 +29,18 @@ func (p *ProjectService) GetProjectByID(projID uint) (project letstrans.Project,
 }
 
 // AddDocument 添加文档, 同时开启 doc to seg 任务
-func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (err error) {
+func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (doc *letstrans.Document, err error) {
 	file := letstrans.FileRecord{}
 	err = global.GVA_DB.Model(&letstrans.FileRecord{}).Where("id = ?", fileID).First(&file).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
 	author := system.SysUser{}
 	err = global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", authorID).First(&author).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
-	doc := letstrans.Document{
+	doc = &letstrans.Document{
 		Name:      file.FileName,
 		Author:    author.NickName, // 昵称作为作者
 		AuthorID:  authorID,
@@ -48,18 +51,22 @@ func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (e
 	}
 	err = global.GVA_DB.Model(&letstrans.Document{}).Create(&doc).Error
 	if err != nil {
-		return err
+		return
 	}
 	// 开启 doc to seg 任务
-	segments, err := utils.Doc2Seg(doc)
+	segments, err := document.ProcessDocument(doc.FilePath)
 	if err != nil {
-		return err
+		return
+	}
+	for i := range segments {
+		segments[i].DocumentID = doc.ID
+
 	}
 	err = global.GVA_DB.Model(&letstrans.Segment{}).Create(&segments).Error
 	if err != nil {
-		return err
+		return
 	}
-	return err
+	return
 }
 
 // DeleteDocuments 删除文档
@@ -71,6 +78,33 @@ func (p *ProjectService) DeleteDocuments(fileIDs []uint, projID uint) (err error
 func (p *ProjectService) DeleteProject(projIDs []uint) (err error) {
 	err = global.GVA_DB.Model(&letstrans.Project{}).Where("id in (?)", projIDs).Delete(&letstrans.Project{}).Error
 	return err
+}
+
+func (p *ProjectService) ExportDocument(fileIDs []uint, eType string) (zipPath string, err error) {
+	if eType != letstrans.ET_Original && eType != letstrans.ET_Translated {
+		return "", errors.New("export type error")
+	}
+	// 获取文件路径
+	var fileRecords []letstrans.FileRecord
+	err = global.GVA_DB.Model(&letstrans.FileRecord{}).Where("id in (?)", fileIDs).Find(&fileRecords).Error
+	if err != nil {
+		return "", err
+	}
+	// 导出的文件名
+	ext := ".zip"
+	name := "export"
+	zipName := name + "_" + time.Now().Format("20060102150405") + ext
+	zipPath = "uploads/zip/" + zipName
+	// 导出文件路径
+	files := make([]string, len(fileRecords))
+	for i, file := range fileRecords {
+		files[i] = file.FilePath
+	}
+	err = utils.ZipFiles(zipPath, files, ".", ".")
+	if err != nil {
+		return "", err
+	}
+	return zipPath, nil
 }
 
 //func (p *ProjectService) GetProjectDetail(projID uint) (res response.ProjectDetailRes, err error) {

@@ -8,7 +8,7 @@ import (
 type SegmentService struct{}
 
 func (s *SegmentService) GetSegmentList(docID uint) (segments []letstrans.Segment, err error) {
-	err = global.GVA_DB.Model(&letstrans.Segment{}).Where("document_id = ?", docID).Find(&segments).Order("id ASC").Error
+	err = global.GVA_DB.Model(&letstrans.Segment{}).Where("document_id = ?", docID).Order("id ASC").Find(&segments).Error
 	return segments, err
 }
 
