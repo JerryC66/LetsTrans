@@ -29,14 +29,14 @@ class TxtDocumentProcessor(DocumentProcessor):
             if line.strip() == "":
                 continue
             segments.append({
-                "id": segment_id,
-                "original_text": line.strip()
+                "relative_id": segment_id,
+                "source_text": line.strip()
             })
             segment_id += 1
         return segments
 
     def modify_document(self, content: BytesIO, replacements: list) -> BytesIO:
-        sorted_content = sorted(replacements, key=lambda x: x['id'])
+        sorted_content = sorted(replacements, key=lambda x: x['relative_id'])
         lines = [item['translated_text'] for item in sorted_content]
         modified_content = "\n".join(lines)
         return BytesIO(modified_content.encode('utf-8'))
@@ -51,8 +51,8 @@ class DocxDocumentProcessor(DocumentProcessor):
             if paragraph.text.strip() == "":
                 continue
             segments.append({
-                "id": segment_id,
-                "original_text": paragraph.text.strip()
+                "relative_id": segment_id,
+                "source_text": paragraph.text.strip()
             })
             segment_id += 1
         return segments
@@ -82,12 +82,12 @@ class PptxDocumentProcessor(DocumentProcessor):
                 if not shape.has_text_frame:
                     continue
                 text_frame = shape.text_frame
-                original_text = text_frame.text
-                if original_text.strip() == "":
+                source_text = text_frame.text
+                if source_text.strip() == "":
                     continue
                 segments.append({
-                    "id": segment_id,
-                    "original_text": original_text.strip()
+                    "relative_id": segment_id,
+                    "source_text": source_text.strip()
                 })
                 segment_id += 1
         return segments
@@ -124,8 +124,8 @@ class PdfDocumentProcessor(DocumentProcessor):
                 if text.strip() == "":
                     continue
                 segments.append({
-                    "id": segment_id,
-                    "original_text": text.strip()
+                    "relative_id": segment_id,
+                    "source_text": text.strip()
                 })
                 segment_id += 1
         return segments

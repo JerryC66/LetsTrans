@@ -54,9 +54,12 @@ func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (d
 		return
 	}
 	// 开启 doc to seg 任务
-	processor := document.NewDocProcessor(file.FileType)
-	segments, err := processor.Doc2Seg(*doc)
+	segments, err := document.ProcessDocument(doc.FilePath)
 	if err != nil {
+		return
+	}
+	for i := range segments {
+		segments[i].DocumentID = doc.ID
 
 	}
 	err = global.GVA_DB.Model(&letstrans.Segment{}).Create(&segments).Error

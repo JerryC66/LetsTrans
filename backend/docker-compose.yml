@@ -13,6 +13,7 @@ services:
       - CGO_ENABLED=0
     depends_on:
       - doc-processor
+      - deeplx
   deeplx:
     image: ghcr.io/owo-network/deeplx:latest
     ports:
