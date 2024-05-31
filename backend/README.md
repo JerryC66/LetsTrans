@@ -16,3 +16,8 @@
 | `global`     | 全局变量       | 数据库客户端                 |
 |              |            |                        |
 
+## 密钥配置
+
+通过 `.env` 文件配置密钥。格式同 `.env.backup`。
+
+AK 和 SK 分别是火山引擎的 Access Key 和 Secret Key。这一配置会在 docker compose 启动时读取。

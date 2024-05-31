@@ -40,27 +40,33 @@ func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (d
 	if err != nil {
 		return nil, err
 	}
+	proj := letstrans.Project{}
+	err = global.GVA_DB.Model(&letstrans.Project{}).Where("id = ?", projID).First(&proj).Error
+	if err != nil {
+		return nil, err
+	}
 	doc = &letstrans.Document{
-		Name:      file.FileName,
-		Author:    author.NickName, // 昵称作为作者
-		AuthorID:  authorID,
-		Filetype:  file.FileType,
-		ProjectID: projID,
-		FilePath:  file.FilePath,
-		FileID:    fileID,
+		Name:       file.FileName,
+		Author:     author.NickName, // 昵称作为作者
+		AuthorID:   authorID,
+		Filetype:   file.FileType,
+		ProjectID:  projID,
+		FilePath:   file.FilePath,
+		FileID:     fileID,
+		SourceLang: proj.SourceLang,
+		TargetLang: proj.TargetLang,
 	}
 	err = global.GVA_DB.Model(&letstrans.Document{}).Create(&doc).Error
 	if err != nil {
 		return
 	}
 	// 开启 doc to seg 任务
-	segments, err := document.ProcessDocument(doc.FilePath)
+	segments, err := document.ProcessDocument(*doc)
 	if err != nil {
 		return
 	}
 	for i := range segments {
 		segments[i].DocumentID = doc.ID
-
 	}
 	err = global.GVA_DB.Model(&letstrans.Segment{}).Create(&segments).Error
 	if err != nil {
