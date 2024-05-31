@@ -15,7 +15,8 @@ type ProcessResponse struct {
 }
 
 // ProcessDocument uploads a document to the processing endpoint and returns the segments.
-func ProcessDocument(filepath string) ([]letstrans.Segment, error) {
+func ProcessDocument(doc letstrans.Document) ([]letstrans.Segment, error) {
+	filepath := doc.FilePath
 	url := "http://doc-processor:5000/process_document"
 	file, err := os.Open(filepath)
 	if err != nil {
