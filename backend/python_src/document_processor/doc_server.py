@@ -1,52 +1,53 @@
 from abc import ABC, abstractmethod
 import json
+import grpc
+from concurrent import futures
+import document_processor_pb2
+import document_processor_pb2_grpc
+
 
 class DocumentProcessor(ABC):
     @abstractmethod
-    def read_document(self, input_path, output_path) -> list:
+    def read_document(self, content: str) -> list:
         pass
 
     @abstractmethod
-    def modify_document(self, input_path, output_path, replacements):
+    def modify_document(self, content: str, replacements: list) -> str:
         pass
 
 
 class TxtDocumentProcessor(DocumentProcessor):
-    def read_document(self, input_path, output_path) -> list:
+    def read_document(self, content: str) -> list:
         segments = []
-        with open(input_path, 'r', encoding='utf-8') as infile:
-            segment_id = 0
-            for line in infile:
-                if line.strip() == "":
-                    continue
-                segments.append({
-                    "id": segment_id,
-                    "original_text": line.strip()
-                })
-                segment_id += 1
-        # with open(output_path, "w", encoding='utf-8') as outfile:
-        #     json.dump(segments, outfile, ensure_ascii=False, indent=4)
+        segment_id = 0
+        for line in content.splitlines():
+            if line.strip() == "":
+                continue
+            segments.append({
+                "id": segment_id,
+                "original_text": line.strip()
+            })
+            segment_id += 1
         return segments
 
-    def modify_document(self, input_path, output_path, replacements):
+    def modify_document(self, content: str, replacements: list) -> str:
         lines = []
-        with open(input_path, 'r', encoding='utf-8') as infile:
-            segment_id = 0
-            for line in infile:
-                if line.strip() == "":
-                    lines.append(line)
-                    continue
-                modified_line = replacements[segment_id].get('translated_text', line.strip())
-                lines.append(modified_line + "\n")
-                segment_id += 1
-        with open(output_path, 'w', encoding='utf-8') as outfile:
-            outfile.writelines(lines)
+        segment_id = 0
+        for line in content.splitlines():
+            if line.strip() == "":
+                lines.append(line)
+                continue
+            modified_line = replacements[segment_id].get('translated_text', line.strip())
+            lines.append(modified_line)
+            segment_id += 1
+        return "\n".join(lines)
 
 
 class DocxDocumentProcessor(DocumentProcessor):
-    def read_document(self, input_path, output_path) -> list:
+    def read_document(self, content: str) -> list:
         from docx import Document
-        doc = Document(input_path)
+        from io import BytesIO
+        doc = Document(BytesIO(content.encode('utf-8')))
         segments = []
         segment_id = 0
         for paragraph in doc.paragraphs:
@@ -57,27 +58,30 @@ class DocxDocumentProcessor(DocumentProcessor):
                 "original_text": paragraph.text.strip()
             })
             segment_id += 1
-        json.dump(segments, open(output_path, "w", encoding='utf-8'), ensure_ascii=False, indent=4)
         return segments
 
-    def modify_document(self, input_path, output_path, replacements):
+    def modify_document(self, content: str, replacements: list) -> str:
         from docx import Document
-        doc = Document(input_path)
+        from io import BytesIO
+        doc = Document(BytesIO(content.encode('utf-8')))
         segment_id = 0
         for paragraph in doc.paragraphs:
             if paragraph.text.strip() == "":
                 continue
             paragraph.text = replacements[segment_id]['translated_text']
             segment_id += 1
-        doc.save(output_path)
+        output = BytesIO()
+        doc.save(output)
+        return output.getvalue().decode('utf-8')
 
 
 class PptxDocumentProcessor(DocumentProcessor):
-    def read_document(self, input_path, output_path) -> list:
+    def read_document(self, content: str) -> list:
         from pptx import Presentation
-        prs = Presentation(input_path)
-        segment_id = 0
+        from io import BytesIO
+        prs = Presentation(BytesIO(content.encode('utf-8')))
         segments = []
+        segment_id = 0
         for slide in prs.slides:
             for shape in slide.shapes:
                 if not shape.has_text_frame:
@@ -91,12 +95,12 @@ class PptxDocumentProcessor(DocumentProcessor):
                     "original_text": original_text.strip()
                 })
                 segment_id += 1
-        json.dump(segments, open(output_path, "w", encoding='utf-8'), ensure_ascii=False, indent=4)
         return segments
 
-    def modify_document(self, input_path, output_path, replacements):
+    def modify_document(self, content: str, replacements: list) -> str:
         from pptx import Presentation
-        prs = Presentation(input_path)
+        from io import BytesIO
+        prs = Presentation(BytesIO(content.encode('utf-8')))
         segment_id = 0
         for slide in prs.slides:
             for shape in slide.shapes:
@@ -107,15 +111,18 @@ class PptxDocumentProcessor(DocumentProcessor):
                     continue
                 text_frame.text = replacements[segment_id]['translated_text']
                 segment_id += 1
-        prs.save(output_path)
+        output = BytesIO()
+        prs.save(output)
+        return output.getvalue().decode('utf-8')
 
 
 class PdfDocumentProcessor(DocumentProcessor):
-    def read_document(self, input_path, output_path) -> list:
+    def read_document(self, content: str) -> list:
         import fitz  # PyMuPDF
-        doc = fitz.open(input_path)
-        segment_id = 0
+        from io import BytesIO
+        doc = fitz.open("pdf", BytesIO(content.encode('utf-8')))
         segments = []
+        segment_id = 0
         for page_num in range(len(doc)):
             page = doc[page_num]
             blocks = page.get_text("blocks")
@@ -128,23 +135,14 @@ class PdfDocumentProcessor(DocumentProcessor):
                     "original_text": text.strip()
                 })
                 segment_id += 1
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(segments, f, ensure_ascii=False, indent=4)
         return segments
 
-    def modify_document(self, input_path, output_path, replacements):
-        lines = ''
-        for item in replacements:
-            lines += item['translated_text'] + '\n'
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(lines)
+    def modify_document(self, content: str, replacements: list) -> str:
+        lines = '\n'.join([item['translated_text'] for item in replacements])
+        return lines
 
 
 # gRPC 服务实现
-from concurrent import futures
-import grpc
-import document_processor_pb2
-import document_processor_pb2_grpc
 
 class DocumentProcessorServicer(document_processor_pb2_grpc.DocumentProcessorServicer):
     def __init__(self):
@@ -162,7 +160,7 @@ class DocumentProcessorServicer(document_processor_pb2_grpc.DocumentProcessorSer
             context.set_details('Unsupported file type')
             return document_processor_pb2.ProcessDocumentResponse()
 
-        segments = processor.read_document(request.input_path, request.output_path)
+        segments = processor.read_document(request.content)
         return document_processor_pb2.ProcessDocumentResponse(segments=json.dumps(segments))
 
     def ModifyDocument(self, request, context):
@@ -173,8 +171,8 @@ class DocumentProcessorServicer(document_processor_pb2_grpc.DocumentProcessorSer
             return document_processor_pb2.ModifyDocumentResponse()
 
         replacements = json.loads(request.replacements)
-        processor.modify_document(request.input_path, request.output_path, replacements)
-        return document_processor_pb2.ModifyDocumentResponse(success=True)
+        modified_content = processor.modify_document(request.content, replacements)
+        return document_processor_pb2.ModifyDocumentResponse(modified_content=modified_content)
 
 
 def serve():
