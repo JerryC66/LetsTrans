@@ -7,3 +7,9 @@ type FileRecord struct {
 	FilePath string `gorm:"type:varchar(255)" json:"-"`
 	FileType string `gorm:"type:varchar(255)" json:"file_type"`
 }
+
+const (
+	// 文件导出类型
+	ET_Original   = "original"
+	ET_Translated = "translated"
+)

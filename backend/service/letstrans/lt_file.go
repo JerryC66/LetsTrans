@@ -26,5 +26,8 @@ func (fileService *FileService) UploadFile(header *multipart.FileHeader) (file l
 		FileType: s[len(s)-1],
 	}
 	err = global.GVA_DB.Create(&f).Error
+	if err != nil {
+		return f, err
+	}
 	return f, nil
 }

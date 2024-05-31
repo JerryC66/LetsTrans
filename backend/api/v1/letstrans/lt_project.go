@@ -1,12 +1,15 @@
 package letstrans
 
 import (
+	"github.com/firwoodlin/letstrans/global"
 	comReq "github.com/firwoodlin/letstrans/model/common/request"
 	"github.com/firwoodlin/letstrans/model/common/response"
 	"github.com/firwoodlin/letstrans/model/letstrans"
 	letsReq "github.com/firwoodlin/letstrans/model/letstrans/request"
 	"github.com/firwoodlin/letstrans/utils"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+	"path/filepath"
 	"strconv"
 )
 
@@ -104,26 +107,39 @@ func (pa *ProjectApi) DeleteProject(c *gin.Context) {
 
 func (pa *ProjectApi) AddDocument(c *gin.Context) {
 	jwtId := utils.GetUserID(c)
-	projID := c.Param("project_id")
-	// 从请求中解析出项目ID
-	projIDUint, err := strconv.ParseUint(projID, 10, 32)
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
-	var ids comReq.IdsReq
-	err = c.ShouldBindJSON(&ids)
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
+	//authorInfo, err := userService.FindUserById(int(jwtId))
+	//if err != nil {
+	//	response.FailWithMessage(err.Error(), c)
+	//	return
+	//}
+
+	projId := utils.Param2Uint(c, "project_id")
+	if projId == 0 {
+		response.FailWithMessage("project id error", c)
 		return
 	}
 
-	err = projectService.AddDocument(ids.Ids[0], jwtId, uint(projIDUint))
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
+	// save file , get file ids , convert to document
+	form, _ := c.MultipartForm()
+	files := form.File["files"]
+	fileRecords := make([]letstrans.FileRecord, len(files))
+	docs := make([]*letstrans.Document, len(files))
+	for i, file := range files {
+		var err error = nil
+		fileRecords[i], err = fileService.UploadFile(file) // 文件上传后拿到文件路径
+		if err != nil {
+			global.GVA_LOG.Error("修改数据库链接失败!", zap.Error(err))
+			response.FailWithMessage("修改数据库链接失败", c)
+			return
+		}
+		docs[i], err = projectService.AddDocument(fileRecords[i].ID, jwtId, projId)
+		if err != nil {
+			response.FailWithMessage(err.Error(), c)
+			return
+		}
 	}
-	response.Ok(c)
+
+	response.OkWithData(docs, c)
 }
 
 func (pa *ProjectApi) DeleteDocuments(c *gin.Context) {
@@ -147,4 +163,26 @@ func (pa *ProjectApi) DeleteDocuments(c *gin.Context) {
 		return
 	}
 	response.Ok(c)
+}
+
+func (pa *ProjectApi) DownloadDocuments(c *gin.Context) {
+	req := letsReq.FileDownloadReq{}
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if req.Type != letstrans.ET_Original && req.Type != letstrans.ET_Translated {
+		response.FailWithMessage("export type error", c)
+		return
+	}
+	zipPath, err := projectService.ExportDocument(req.IDs, req.Type)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	c.Header("Content-Disposition", "attachment; filename="+filepath.Base(zipPath))
+
+	c.File(zipPath)
+
 }

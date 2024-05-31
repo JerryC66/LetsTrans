@@ -48,6 +48,8 @@ func RegisterTables() {
 		letstrans.Document{},
 		letstrans.Project{},
 		letstrans.Segment{},
+		letstrans.Glossary{},
+		letstrans.Term{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

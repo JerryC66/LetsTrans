@@ -18,6 +18,7 @@ func (p *ProjectRouter) InitProjectRouter(Router *gin.RouterGroup) (R gin.IRoute
 		projectRouter.DELETE("", projectApi.DeleteProject)
 		projectRouter.POST("/:project_id/files", projectApi.AddDocument)
 		projectRouter.DELETE("/:project_id/files", projectApi.DeleteDocuments)
+		projectRouter.GET("/:project_id/files", projectApi.DownloadDocuments)
 	}
 	return projectRouter
 }
