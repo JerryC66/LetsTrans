@@ -61,6 +61,7 @@ func Routers() *gin.Engine {
 		letsTransRouter.InitProjectRouter(PublicGroup)
 		letsTransRouter.InitSegmentRouter(PublicGroup)
 		letsTransRouter.InitGlossaryRouter(PublicGroup)
+		letsTransRouter.InitThirdPartyRouter(PublicGroup)
 	}
 	//PrivateGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix)
 	//PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
