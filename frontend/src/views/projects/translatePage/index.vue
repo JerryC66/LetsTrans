@@ -1,5 +1,8 @@
 <template>
-  <div class="container" :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }">
+  <div
+    class="container"
+    :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }"
+  >
     <nav>
       <div class="row1">
         <div class="icons-bar">
@@ -18,22 +21,30 @@
         </div>
         <div class="record-bar">
           <div class="file-name">
-            <a-typography-text>文件1.docx</a-typography-text>
+            <a-typography-text>{{ document?.name }}</a-typography-text>
           </div>
           <div class="language">
-            <a-typography-text>简体中文</a-typography-text>
+            <a-typography-text
+              >{{ document?.source_lang }} >
+              {{ document?.target_lang }}</a-typography-text
+            >
           </div>
           <div class="progress">
-            <a-progress :percent="0.6" :style="{ width: '100%' }"></a-progress>
-          </div>
-          <div class="description">
-            <a-typography-text> 6000字/共10000字 </a-typography-text>
+            <a-progress
+              :percent="document?.progress"
+              :style="{ width: '100%' }"
+            ></a-progress>
           </div>
         </div>
       </div>
       <div class="row2">
         <div class="search-bar">
-          <a-input-search size="large" :style="{ width: '750px' }" placeholder="Please enter something" search-button />
+          <a-input-search
+            size="large"
+            :style="{ width: '750px' }"
+            placeholder="Please enter something"
+            search-button
+          />
         </div>
         <div class="btn-group">
           <div class="download">
@@ -44,14 +55,22 @@
             </a-button>
           </div>
           <div class="import">
-            <a-button size="large" type="primary" shape="round">{{
-              $t('translate.addterm')
-              }}</a-button>
+            <a-button
+              @click="visible1 = true"
+              size="large"
+              type="primary"
+              shape="round"
+              >{{ $t('translate.addterm') }}</a-button
+            >
           </div>
           <div class="pre-trans">
-            <a-button size="large" type="primary" shape="round">{{
-              $t('translate.pretrans')
-              }}</a-button>
+            <a-button
+              @click="visible2 = true"
+              size="large"
+              type="primary"
+              shape="round"
+              >{{ $t('translate.pretrans') }}</a-button
+            >
           </div>
         </div>
       </div>
@@ -59,11 +78,31 @@
     <main>
       <div class="left-side">
         <div class="block">
-          <div class="left-block">
-            <a-textarea></a-textarea>
+          <div class="left-wrapper">
+            <div
+              class="left-block"
+              v-for="(segment, index) in segments"
+              :key="index"
+            >
+              <a-textarea
+                :rows="calculateRows(segment.source_text)"
+                v-model="segment.source_text"
+                :auto-size="{
+                  minRows: 2,
+                  maxRows: 5,
+                }"
+              ></a-textarea>
+            </div>
           </div>
-          <div class="right-block">
-            <a-textarea></a-textarea>
+          <div class="right-wrapper">
+            <div class="right-block">
+              <a-textarea
+                :auto-size="{
+                  minRows: 2,
+                  maxRows: 5,
+                }"
+              ></a-textarea>
+            </div>
           </div>
           <div class="confirm-btn">
             <a-button type="primary" size="large">
@@ -71,7 +110,6 @@
                 <icon-check size="large" />
               </template>
             </a-button>
-
           </div>
         </div>
       </div>
@@ -83,23 +121,29 @@
       </div>
     </main>
   </div>
+  <import-grossary-modal v-model:visible="visible1"></import-grossary-modal>
+  <pre-trans-modal v-model:visible="visible2"></pre-trans-modal>
 </template>
 
 <script setup lang="ts">
   import { computed, ref, reactive, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useAppStore } from '@/store';
+  import PreTransModal from '@/views/projects/components/pre-trans-modal/index.vue';
+  import ImportGrossaryModal from '@/views/projects/components/import-grossary-modal/index.vue';
   import { getDocumentSegments } from '@/api/documents';
-  
+
   const appStore = useAppStore();
   const router = useRouter();
   const route = useRoute();
 
+  const visible1 = ref(false);
+  const visible2 = ref(false);
   const theme = computed(() => {
     return appStore.theme;
   });
 
-  const blocks = ref<any>([]);
+  const segments = ref<any>([]);
   const document = ref<any>();
 
   const fetchSegments = async () => {
@@ -107,26 +151,30 @@
       const response = await getDocumentSegments(Number(route.params.fileId));
       console.log('response:', response);
       if (response && response.data) {
-        blocks.value = response.data.segments;
+        segments.value = response.data.segments;
         document.value = response.data.document;
-      } 
+      }
     } catch (error) {
       console.log('Fail to fetch segments', error);
     }
-  }
+  };
+
+  const calculateRows = (text: string) => {
+    return Math.max(3, Math.ceil(text.length / 20));
+  };
 
   onMounted(fetchSegments);
-
 </script>
 
 <style scoped>
   .container {
     margin: 28px 28px;
-    height: 92%;
+    height: 92vh;
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
   }
 
   nav {
@@ -139,42 +187,48 @@
 
     .row1 {
       display: flex;
+
       .icons-bar {
         flex: 1;
         margin-right: 100px;
         margin-left: 50px;
       }
+
       .record-bar {
         flex: 2;
         display: flex;
+
         .file-name {
-          flex: 1;
-        }
-        .language {
-          flex: 1;
-        }
-        .progress {
           flex: 2;
         }
-        .description {
-          flex: 1.5;
-          margin-left: 50px;
+
+        .language {
+          flex: 2;
+        }
+
+        .progress {
+          flex: 3;
+          margin-right: 100px;
         }
       }
     }
+
     .row2 {
       display: flex;
       margin-top: 30px;
+
       .search-bar {
         flex: 3;
         display: flex;
         justify-content: center;
       }
+
       .btn-group {
         flex: 1;
         display: flex;
         justify-content: space-evenly;
         padding-right: 20px;
+
         .download {
           width: 36px;
           height: 36px;
@@ -193,30 +247,53 @@
     position: absolute;
     top: 150px;
     margin-top: 100px;
+    padding-bottom: 20px;
     width: 80%;
     display: flex;
+    height: calc(100vh - 200px);
+
     .left-side {
       flex: 3;
     }
+
     .right-side {
       flex: 1;
       padding-right: 20px;
     }
+
     .left-side .block {
       display: flex;
       margin-left: 50px;
       margin-right: 50px;
 
-      .left-block {
+      .left-wrapper {
         flex: 1;
         margin-right: 20px;
+
+        .left-block {
+          margin-bottom: 20px;
+        }
       }
-      .right-block {
+
+      .right-wrapper {
         flex: 1;
+
+        .right-block {
+          margin-bottom: 20px;
+        }
       }
+
       .confirm-btn {
         margin-left: 25px;
       }
     }
+  }
+
+  main .left-side {
+    overflow-y: scroll;
+  }
+
+  main .left-side::-webkit-scrollbar {
+    display: none;
   }
 </style>

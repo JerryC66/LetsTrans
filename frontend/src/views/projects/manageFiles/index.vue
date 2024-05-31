@@ -65,7 +65,7 @@
               </div>
             </div>
             <div class="right-side">
-              <div class="create_time">
+              <div class="create_at">
                 <a-typography-text>{{
                   $t('project.file.date')
                 }}</a-typography-text>
@@ -115,7 +115,7 @@
             <div class="right-side">
               <div class="create_time">
                 <a-typography-text>{{
-                  convertToBasicDateFormat(document.CreatedAt)
+                  convertToBasicDateFormat(document.created_at)
                 }}</a-typography-text>
               </div>
               <div class="icons">
@@ -171,7 +171,6 @@
   const fetchFiles = async () => {
     try {
       const response = await getProjectDetail(Number(route.params.projectId));
-      // console.log('response:', response);
       if (response && response.data) {
         documents.value = response.data.documents;
         projectName.value = response.data.project.name;

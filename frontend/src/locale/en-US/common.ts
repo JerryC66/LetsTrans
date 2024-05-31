@@ -37,4 +37,7 @@ export default {
 
   'translate.addterm': 'Add Term',
   'translate.pretrans': 'Pre Trans',
+  'translate.pretrans.chooseapi': 'Please choose api for pre-translation',
+
+  'grossary.import': 'Import Grossary',
 };

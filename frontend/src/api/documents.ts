@@ -6,5 +6,5 @@ export const getDocumentSegments = (documentId: number) => {
   return request({
     url: `/documents/${documentId}/segments`,
     method: 'GET',
-  }) as Promise<HttpRes<{ document: Document; segments: Segment[] }>>;
+  }) as Promise<HttpRes<any>>;
 };

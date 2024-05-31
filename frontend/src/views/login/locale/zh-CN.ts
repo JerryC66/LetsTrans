@@ -13,8 +13,8 @@ export default {
   'login.form.register': '注册账号',
   'login.banner.slogan1': ' Web 端计算机辅助翻译系统',
   'login.banner.subSlogan1': '旨在为用户提供高效、便捷的翻译文本管理服务',
-  'login.banner.slogan2': '内置了常见问题的解决方案',
-  'login.banner.subSlogan2': '国际化，路由配置，状态管理应有尽有',
-  'login.banner.slogan3': '接入可视化增强工具AUX',
-  'login.banner.subSlogan3': '实现灵活的区块式开发',
+  'login.banner.slogan2': '注重高效简约功能翻译',
+  'login.banner.subSlogan2': '项目管理、文件管理结构明晰',
+  'login.banner.slogan3': '翻译人员的不二选择',
+  'login.banner.subSlogan3': '术语库、记忆库最佳帮手',
 };

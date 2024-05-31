@@ -20,8 +20,8 @@ export interface Document {
 export interface Segment {
   document_id: string;
   id: number;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
   source_text: string;
   target_text: string;
   finished: boolean;
