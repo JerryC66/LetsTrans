@@ -207,3 +207,17 @@ func (a *GlossaryApi) CreateTermInBatch(c *gin.Context) {
 		"terms": terms,
 	}, c)
 }
+func (a *GlossaryApi) GetSuggestions(c *gin.Context) {
+	sourceText := c.Query("source_text")
+	if sourceText == "" {
+		response.FailWithMessage("source_text is invalid", c)
+		return
+	}
+	jwtId := utils.GetUserID(c)
+	terms, err := glossaryService.GetSuggestionsBySourceText(sourceText, jwtId)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithData(gin.H{"terms": terms}, c)
+}

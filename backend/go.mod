@@ -31,6 +31,7 @@ require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	cloud.google.com/go/translate v1.10.3 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
+	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/alex-ant/gomath v0.0.0-20160516115720-89013a210a82 // indirect
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/bytedance/sonic v1.11.5 // indirect
@@ -41,6 +42,8 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/elastic/elastic-transport-go/v8 v8.5.0 // indirect
+	github.com/elastic/go-elasticsearch/v8 v8.13.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect

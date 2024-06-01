@@ -23,6 +23,7 @@ func (g *GlossaryRouter) InitGlossaryRouter(Router *gin.RouterGroup) (R gin.IRou
 		glossaryRouter.PUT("/terms/:term_id", glossaryApi.UpdateTerm)
 		glossaryRouter.DELETE("/:glossary_id/terms/:term_id", glossaryApi.DeleteTerm)
 		glossaryRouter.POST("/:glossary_id/terms/batch", glossaryApi.CreateTermInBatch)
+		glossaryRouter.GET("/suggestion", glossaryApi.GetSuggestions)
 	}
 	return glossaryRouter
 }
