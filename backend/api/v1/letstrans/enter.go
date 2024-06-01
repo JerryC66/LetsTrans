@@ -11,14 +11,16 @@ type ApiGroup struct {
 	SegmentApi
 	GlossaryApi
 	ThirdPartyApi
+	TranslationMemoryApi
 }
 
 var (
-	fileService       letstrans.FileService
-	projectService    letstrans.ProjectService
-	documentService   letstrans.DocumentService
-	segmentService    letstrans.SegmentService
-	glossaryService   letstrans.GlossaryService
-	userService       system.UserService
-	thirdPartyService letstrans.ThirdPartyService
+	fileService        letstrans.FileService
+	projectService     letstrans.ProjectService
+	documentService    letstrans.DocumentService
+	segmentService     letstrans.SegmentService
+	glossaryService    letstrans.GlossaryService
+	userService        system.UserService
+	thirdPartyService  letstrans.ThirdPartyService
+	transMemoryService letstrans.TranslateMemoryService
 )
