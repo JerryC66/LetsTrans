@@ -1,11 +1,13 @@
 package letstrans
 
 import (
+	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/common/response"
 	"github.com/firwoodlin/letstrans/model/letstrans"
 	GResponse "github.com/firwoodlin/letstrans/model/letstrans/response"
 	"github.com/firwoodlin/letstrans/utils"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type GlossaryApi struct{}
@@ -176,4 +178,32 @@ func (a *GlossaryApi) DeleteTerm(c *gin.Context) {
 	}
 
 	response.Ok(c)
+}
+
+func (a *GlossaryApi) CreateTermInBatch(c *gin.Context) {
+	_, header, err := c.Request.FormFile("file")
+	if err != nil {
+		global.GVA_LOG.Error("Term 接收文件失败!", zap.Error(err))
+		response.FailWithMessage("接收文件失败", c)
+		return
+	}
+	glossaryID := utils.Param2Uint(c, "glossary_id")
+	if glossaryID == 0 {
+		response.FailWithMessage("glossary_id is invalid", c)
+		return
+	}
+	terms, err := utils.CSV2Terms(header, glossaryID)
+	if err != nil {
+		global.GVA_LOG.Error("Term 解析文件失败!", zap.Error(err))
+		response.FailWithMessage("解析文件失败", c)
+		return
+	}
+	if err := glossaryService.CreateTermInBatch(terms); err != nil {
+		global.GVA_LOG.Error("Term 批量创建失败!", zap.Error(err))
+		response.FailWithMessage("批量创建失败", c)
+		return
+	}
+	response.OkWithData(gin.H{
+		"terms": terms,
+	}, c)
 }
