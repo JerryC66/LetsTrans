@@ -8,10 +8,10 @@ export const getTransAPI = () => {
   }) as Promise<HttpRes<any>>;
 };
 
-export const postTransAPI = ( engine: string, documentId: number) => {
+export const postTransAPI = (data: { engine: string; document_id: number }) => {
   return request({
     url: '/machine/translate',
     method: 'POST',
-    data: engine,
+    data,
   }) as Promise<HttpRes<any>>;
 };
