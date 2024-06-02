@@ -13,7 +13,6 @@ COPY  document_processor/ /app/
 
 # 暴露应用程序运行的端口（根据实际应用端口号调整）
 EXPOSE 5000
-RUN echo "=== Checking /app contents ===" && ls -al /app
 
 # 设置容器启动时运行的命令（根据你的 Python 应用启动方式调整）
 CMD ["python", "doc_server.py"]
