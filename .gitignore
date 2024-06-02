@@ -23,7 +23,14 @@ go.work
 # Editor or IDE condig
 .vscode/
 .idea/
+
+# Runtime data
 log/
 uploads/
 
+
+# Secret Key
 .env
+
+# Python
+__pycache__/
