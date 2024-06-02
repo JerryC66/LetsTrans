@@ -176,6 +176,7 @@ func (pa *ProjectApi) DownloadDocuments(c *gin.Context) {
 		response.FailWithMessage("export type error", c)
 		return
 	}
+	// 这里的 ID 实际上是 Document ID
 	zipPath, err := projectService.ExportDocument(req.IDs, req.Type)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)

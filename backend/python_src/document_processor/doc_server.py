@@ -37,7 +37,7 @@ class TxtDocumentProcessor(DocumentProcessor):
 
     def modify_document(self, content: BytesIO, replacements: list) -> BytesIO:
         sorted_content = sorted(replacements, key=lambda x: x['relative_id'])
-        lines = [item['translated_text'] for item in sorted_content]
+        lines = [item['target_text'] for item in sorted_content]
         modified_content = "\n".join(lines)
         return BytesIO(modified_content.encode('utf-8'))
 
@@ -63,7 +63,7 @@ class DocxDocumentProcessor(DocumentProcessor):
         for paragraph in doc.paragraphs:
             if paragraph.text.strip() == "":
                 continue
-            paragraph.text = replacements[segment_id]['translated_text']
+            paragraph.text = replacements[segment_id]['target_text']
             segment_id += 1
         output = BytesIO()
         doc.save(output)
@@ -102,7 +102,7 @@ class PptxDocumentProcessor(DocumentProcessor):
                 text_frame = shape.text_frame
                 if text_frame.text.strip() == "":
                     continue
-                text_frame.text = replacements[segment_id]['translated_text']
+                text_frame.text = replacements[segment_id]['target_text']
                 segment_id += 1
         output = BytesIO()
         prs.save(output)
