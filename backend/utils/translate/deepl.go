@@ -1,8 +1,9 @@
 package translate
 
 import (
-	"fmt"
+	"github.com/firwoodlin/letstrans/global"
 	"github.com/imroc/req/v3"
+	"go.uber.org/zap"
 )
 
 type DeepL struct{}
@@ -24,7 +25,6 @@ type DeepLResponse struct {
 
 func (d *DeepL) Translate(text string, sourceLang string, targetLang string) (string, error) {
 	// 实现 DeepL 的翻译逻辑
-	//url := "http://localhost:1188/translate"
 	url := "http://deeplx:1188/translate"
 	requestBody := DeepLRequest{
 		Text:       text,
@@ -32,18 +32,22 @@ func (d *DeepL) Translate(text string, sourceLang string, targetLang string) (st
 		TargetLang: targetLang,
 	}
 	// 发送请求
-	client := req.C().DevMode()
+	client := req.C()
 	response, err := client.R().SetBody(requestBody).Post(url)
 	if err != nil {
+		global.GVA_LOG.Error("DeepL 翻译失败, 请求出错", zap.Error(err))
 		return "", err
 	}
 	// 解析响应
 	var deepLResponse DeepLResponse
 	err = response.UnmarshalJson(&deepLResponse)
 	if err != nil {
+		global.GVA_LOG.Error("DeepL 翻译失败, JSON 解析出错", zap.Error(err))
 		return "", err
 	}
 	// 返回翻译结果
-	fmt.Println(deepLResponse)
+	global.GVA_LOG.Debug("DeepL 翻译成功",
+		zap.String("text", text), zap.String("sourceLang", sourceLang),
+		zap.String("targetLang", targetLang), zap.String("data", deepLResponse.Data))
 	return deepLResponse.Data, nil
 }
