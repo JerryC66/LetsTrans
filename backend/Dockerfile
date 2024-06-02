@@ -5,16 +5,20 @@ FROM golang:1.22.1 AS builder
 WORKDIR /app
 
 # 复制 go.mod 和 go.sum 文件
-COPY . .
+COPY go.mod go.sum ./
 
+
+# 设置环境变量并拉取依赖
 RUN go env -w GO111MODULE=on \
     && go env -w GOPROXY=https://goproxy.cn,direct \
     && go env -w CGO_ENABLED=0 \
-    && go env \
-    && go mod tidy \
-    && go build -o server .
+    && go mod tidy
 
-#CMD ["./myapp"]
+# 复制剩余的项目文件
+COPY . .
+
+# 编译项目
+RUN go build -o server .
 
 ## 第二阶段：运行阶段
 FROM alpine:latest

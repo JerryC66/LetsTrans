@@ -5,4 +5,6 @@ type RouterGroup struct {
 	ProjectRouter
 	SegmentRouter
 	GlossaryRouter
+	ThirdPartyRouter
+	TranslationMemoryRouter
 }

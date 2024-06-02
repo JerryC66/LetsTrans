@@ -6,5 +6,4 @@ type ServiceGroup struct {
 	GlossaryService
 	ThirdPartyService
 	TranslateMemoryService
-	TranslateBasisService
 }

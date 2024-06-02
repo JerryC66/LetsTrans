@@ -3,25 +3,8 @@ package letstrans
 import (
 	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
+	"strings"
 )
-
-// Glossary
-//type Glossary struct {
-//	BaseModel
-//	Name       string `json:"name"`   // 术语库名称
-//	Author     string `json:"author"` // 作者昵称
-//	Comment    string `json:"comment"`
-//	SourceLang string `json:"source_lang"`
-//	TargetLang string `json:"target_lang"`
-//}
-//type Term struct {
-//	BaseModel
-//	GlossaryID uint   `json:"glossary_id"` //术语库 ID
-//	SourceLang string `json:"source_lang"`
-//	TargetLang string `json:"target_lang"`
-//	SourceText string `json:"source_text"`
-//	TargetText string `json:"target_text"`
-//}
 
 // GlossaryService 定义术语库服务结构体
 type GlossaryService struct{}
@@ -74,4 +57,34 @@ func (s *GlossaryService) UpdateTerm(termID uint, term letstrans.Term) (err erro
 func (s *GlossaryService) DeleteTerm(termID uint) (err error) {
 	err = global.GVA_DB.Delete(&letstrans.Term{}, termID).Error
 	return err
+}
+
+func (s *GlossaryService) CreateTermInBatch(terms []letstrans.Term) (err error) {
+	err = global.GVA_DB.Create(&terms).Error
+	return err
+}
+
+func (s *GlossaryService) GetSuggestionsBySourceText(sourceText string, authorID uint) (terms []letstrans.Term, err error) {
+	var glossaries []letstrans.Glossary
+	err = global.GVA_DB.Model(&letstrans.Glossary{}).Where("author_id = ?", authorID).Find(&glossaries).Error
+	if err != nil {
+		return nil, err
+	}
+	var glossaryIDs []uint
+	for _, glossary := range glossaries {
+		glossaryIDs = append(glossaryIDs, glossary.ID)
+	}
+	var rawTerms []letstrans.Term
+	err = global.GVA_DB.Model(&letstrans.Term{}).Where("glossary_id IN (?)", glossaryIDs).Find(&rawTerms).Error
+	if err != nil {
+		return nil, err
+	}
+
+	for _, term := range rawTerms {
+		if strings.Contains(sourceText, term.SourceText) {
+			terms = append(terms, term)
+		}
+	}
+	//err = global.GVA_DB.Model(&letstrans.Term{}).Where("source_text LIKE ?", "%"+sourceText+"%").Find(&terms).Error
+	return
 }

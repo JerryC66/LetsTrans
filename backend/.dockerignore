@@ -1,0 +1,5 @@
+uploads/
+*.exe
+
+.git/
+.cache

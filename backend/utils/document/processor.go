@@ -3,11 +3,16 @@ package document
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
+	"github.com/firwoodlin/letstrans/utils"
+	"github.com/imroc/req/v3"
+	"go.uber.org/zap"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 type ProcessResponse struct {
@@ -15,7 +20,8 @@ type ProcessResponse struct {
 }
 
 // ProcessDocument uploads a document to the processing endpoint and returns the segments.
-func ProcessDocument(filepath string) ([]letstrans.Segment, error) {
+func ProcessDocument(doc letstrans.Document) ([]letstrans.Segment, error) {
+	filepath := doc.FilePath
 	url := "http://doc-processor:5000/process_document"
 	file, err := os.Open(filepath)
 	if err != nil {
@@ -59,53 +65,48 @@ func ProcessDocument(filepath string) ([]letstrans.Segment, error) {
 }
 
 // ModifyDocument uploads the document along with the replacements and retrieves the modified document.
-func ModifyDocument(filepath string, replacements []letstrans.Segment) error {
+func ModifyDocument(filePath string, replacements []letstrans.Segment) (outFilePath string, err error) {
 	url := "http://doc-processor:5000/modify_document"
-
-	file, err := os.Open(filepath)
+	file, err := os.Open(filePath)
 	if err != nil {
-		return err
+		return
 	}
 	defer file.Close()
 
-	body := new(bytes.Buffer)
-	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("file", filepath)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(part, file)
-	if err != nil {
-		return err
-	}
-
 	replacementsJSON, err := json.Marshal(replacements)
 	if err != nil {
-		return err
+		return
 	}
 
-	_ = writer.WriteField("replacements", string(replacementsJSON))
-	writer.Close()
-
-	req, err := http.NewRequest("POST", url, body)
+	// 发送请求
+	client := req.C()
+	resp, err := client.R().
+		SetFile("file", filePath).
+		SetFormData(map[string]string{
+			"replacements": string(replacementsJSON),
+		}).
+		Post(url)
 	if err != nil {
-		return err
+		global.GVA_LOG.Error("ModifyDocument failed", zap.Error(err))
 	}
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
+	outFileName := "modified_" + filepath.Base(filePath)
+	outFileDir := filepath.Join(filepath.Dir(filePath), "modified")
+	if err = utils.CreateDir(outFileDir); err != nil {
+		global.GVA_LOG.Error("Failed to create directory", zap.Error(err))
+		return "", err
 	}
-	defer resp.Body.Close()
 
-	outFile, err := os.Create("modified_" + filepath)
+	outFilePath = filepath.Join(outFileDir, outFileName)
+	outFile, err := os.Create(outFilePath)
 	if err != nil {
-		return err
+		global.GVA_LOG.Error("Failed to create output file", zap.Error(err))
+		return "", err
 	}
 	defer outFile.Close()
 
-	_, err = io.Copy(outFile, resp.Body)
-	return err
+	if _, err := outFile.Write(resp.Bytes()); err != nil {
+		global.GVA_LOG.Error("Failed to write modified document", zap.Error(err))
+		return "", err
+	}
+	return outFilePath, err
 }

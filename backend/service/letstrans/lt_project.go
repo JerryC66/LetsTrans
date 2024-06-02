@@ -1,12 +1,13 @@
 package letstrans
 
 import (
-	"errors"
+	"fmt"
 	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
 	"github.com/firwoodlin/letstrans/model/system"
 	"github.com/firwoodlin/letstrans/utils"
 	"github.com/firwoodlin/letstrans/utils/document"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -40,27 +41,33 @@ func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (d
 	if err != nil {
 		return nil, err
 	}
+	proj := letstrans.Project{}
+	err = global.GVA_DB.Model(&letstrans.Project{}).Where("id = ?", projID).First(&proj).Error
+	if err != nil {
+		return nil, err
+	}
 	doc = &letstrans.Document{
-		Name:      file.FileName,
-		Author:    author.NickName, // 昵称作为作者
-		AuthorID:  authorID,
-		Filetype:  file.FileType,
-		ProjectID: projID,
-		FilePath:  file.FilePath,
-		FileID:    fileID,
+		Name:       file.FileName,
+		Author:     author.NickName, // 昵称作为作者
+		AuthorID:   authorID,
+		Filetype:   file.FileType,
+		ProjectID:  projID,
+		FilePath:   file.FilePath,
+		FileID:     fileID,
+		SourceLang: proj.SourceLang,
+		TargetLang: proj.TargetLang,
 	}
 	err = global.GVA_DB.Model(&letstrans.Document{}).Create(&doc).Error
 	if err != nil {
 		return
 	}
 	// 开启 doc to seg 任务
-	segments, err := document.ProcessDocument(doc.FilePath)
+	segments, err := document.ProcessDocument(*doc)
 	if err != nil {
 		return
 	}
 	for i := range segments {
 		segments[i].DocumentID = doc.ID
-
 	}
 	err = global.GVA_DB.Model(&letstrans.Segment{}).Create(&segments).Error
 	if err != nil {
@@ -80,31 +87,62 @@ func (p *ProjectService) DeleteProject(projIDs []uint) (err error) {
 	return err
 }
 
-func (p *ProjectService) ExportDocument(fileIDs []uint, eType string) (zipPath string, err error) {
-	if eType != letstrans.ET_Original && eType != letstrans.ET_Translated {
-		return "", errors.New("export type error")
-	}
+func (p *ProjectService) ExportDocument(fileIDs []uint, exportType string) (zipPath string, err error) {
 	// 获取文件路径
-	var fileRecords []letstrans.FileRecord
-	err = global.GVA_DB.Model(&letstrans.FileRecord{}).Where("id in (?)", fileIDs).Find(&fileRecords).Error
+	var documents []letstrans.Document
+	err = global.GVA_DB.Model(&letstrans.Document{}).Where("id in (?)", fileIDs).Find(&documents).Error
 	if err != nil {
 		return "", err
 	}
 	// 导出的文件名
 	ext := ".zip"
 	name := "export"
-	zipName := name + "_" + time.Now().Format("20060102150405") + ext
+	zipName := name + "_" + exportType + "_" + time.Now().Format("20060102150405") + ext
 	zipPath = "uploads/zip/" + zipName
 	// 导出文件路径
-	files := make([]string, len(fileRecords))
-	for i, file := range fileRecords {
-		files[i] = file.FilePath
+	files := make([]string, len(documents))
+	switch exportType {
+	case letstrans.ET_Original:
+		files = exportOriginalFile(documents)
+	case letstrans.ET_Translated:
+		files = exportTranslatedFile(documents)
+	default:
+		return "", fmt.Errorf("unsupported export type: %s", exportType)
 	}
 	err = utils.ZipFiles(zipPath, files, ".", ".")
 	if err != nil {
 		return "", err
 	}
 	return zipPath, nil
+}
+
+func exportOriginalFile(docs []letstrans.Document) (files []string) {
+	files = make([]string, len(docs))
+	for i, record := range docs {
+		files[i] = record.FilePath
+	}
+	return files
+}
+func exportTranslatedFile(docs []letstrans.Document) (files []string) {
+	//document.ModifyDocument
+	files = make([]string, len(docs))
+	for i, doc := range docs {
+		// 获取文档的所有段落
+		var segments []letstrans.Segment
+		err := global.GVA_DB.Model(&letstrans.Segment{}).Where("document_id = ?", doc.ID).Find(&segments).Error
+		if err != nil {
+			global.GVA_LOG.Error("Get segments failed", zap.Error(err))
+			continue
+		}
+		// 获取替换后的文档
+		filePath, err := document.ModifyDocument(doc.FilePath, segments)
+		if err != nil {
+			global.GVA_LOG.Error("Modify document failed", zap.Error(err))
+			continue
+		}
+		files[i] = filePath
+	}
+	return files
 }
 
 //func (p *ProjectService) GetProjectDetail(projID uint) (res response.ProjectDetailRes, err error) {

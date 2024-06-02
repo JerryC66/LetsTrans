@@ -40,6 +40,7 @@ func Routers() *gin.Engine {
 
 	// 跨域，如需跨域可以打开下面的注释
 	Router.Use(middleware.Cors()) // 直接放行全部跨域请求
+	Router.Use(middleware.LogDetail())
 	// Router.Use(middleware.CorsByRules()) // 按照配置的规则放行跨域请求
 	global.GVA_LOG.Info("use middleware cors")
 	//docs.SwaggerInfo.BasePath = global.GVA_CONFIG.System.RouterPrefix
@@ -61,6 +62,8 @@ func Routers() *gin.Engine {
 		letsTransRouter.InitProjectRouter(PublicGroup)
 		letsTransRouter.InitSegmentRouter(PublicGroup)
 		letsTransRouter.InitGlossaryRouter(PublicGroup)
+		letsTransRouter.InitThirdPartyRouter(PublicGroup)
+		letsTransRouter.InitTranslationMemoryRouter(PublicGroup)
 	}
 	//PrivateGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix)
 	//PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
