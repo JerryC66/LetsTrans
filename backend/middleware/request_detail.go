@@ -19,9 +19,11 @@ func LogDetail() gin.HandlerFunc {
 		url := c.Request.URL.String()
 
 		// 记录请求头
-		headers := c.Request.Header
+		//headers := c.Request.Header
+		clientIP := c.ClientIP()
 
 		// 记录请求体
+		bodyType := c.ContentType()
 		var requestBody bytes.Buffer
 		if c.Request.Body != nil {
 			body, err := io.ReadAll(c.Request.Body)
@@ -42,12 +44,15 @@ func LogDetail() gin.HandlerFunc {
 
 		// 打印日志
 		global.GVA_LOG.Info("Request details",
-			zap.String("method", method),
-			zap.String("url", url),
-			zap.Int("status", statusCode),
-			zap.Duration("duration", duration),
-			zap.Any("headers", headers),
-			zap.String("body", requestBody.String()),
+			zap.String("[client_ip]", clientIP),
+			zap.String("[method]", method),
+			zap.String("[url]", url),
+			zap.Int("[status]", statusCode),
+			zap.Duration("[duration]", duration),
+			//zap.Any("[headers]", headers),
+			zap.String("[bodyType]", bodyType),
+
+			zap.String("[body]", requestBody.String()),
 		)
 	}
 }

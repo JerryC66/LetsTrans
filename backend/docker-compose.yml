@@ -16,6 +16,14 @@ services:
     depends_on:
       - doc-processor
       - deeplx
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8098/health" ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
   deeplx:
     image: ghcr.io/owo-network/deeplx:latest
     ports:
