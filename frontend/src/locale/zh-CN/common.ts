@@ -36,7 +36,10 @@ export default {
 
   'translate.addterm': '导入新术语',
   'translate.pretrans': '全文预翻译',
-  'translate.pretrans.chooseapi': '请选择你想要的预翻译api',
+  'translate.pretrans.description': '请选择你想要的预翻译引擎',
+  'translate.pretrans.loading': '预翻译中，请耐心等待...',
+  'translate.pretrans.success': '预翻译完成！',
+  'translate.pretrans.fail': '出现了一些小错误...',
 
   'grossary.import': '导入术语库',
 };
