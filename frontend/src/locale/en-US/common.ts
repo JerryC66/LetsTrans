@@ -39,5 +39,5 @@ export default {
   'translate.pretrans': 'Pre Trans',
   'translate.pretrans.description': 'Please choose api for pre-translation',
 
-  'grossary.import': 'Import Grossary',
+  'glossary.import': 'Import Glossary',
 };

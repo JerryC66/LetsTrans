@@ -81,7 +81,6 @@
           class="block"
           v-for="(segment, index) in segments"
           :key="'block-' + index"
-          
         >
           <div class="left-wrapper">
             <div class="left-block" :key="'left-' + index">
@@ -127,7 +126,7 @@
       </div>
     </main>
   </div>
-  <import-grossary-modal v-model:visible="visible1"></import-grossary-modal>
+  <import-glossary-modal v-model:visible="visible1"></import-glossary-modal>
   <pre-trans-modal
     v-model:visible="visible2"
     @pretransData="handlePretrans"
@@ -139,8 +138,9 @@
   import { useRoute, useRouter } from 'vue-router';
   import { useAppStore } from '@/store';
   import PreTransModal from '@/views/projects/components/pre-trans-modal/index.vue';
-  import ImportGrossaryModal from '@/views/projects/components/import-grossary-modal/index.vue';
+  import ImportGlossaryModal from '@/views/projects/components/import-glossary-modal/index.vue';
   import { getDocumentSegments, updateDocumentSegment } from '@/api/translate';
+  import { getGlossarySuggestion, addTermToGlossary } from '@/api/grossaries';
 
   const appStore = useAppStore();
   const router = useRouter();
@@ -157,6 +157,7 @@
   const pretransRes = ref<any>([]);
   const rowsArray = ref<any>([]);
   const activeBlock = ref(-1);
+  const termsList = ref([]);
 
   const calculateRows = (text1: string, text2: string) => {
     const isChinese = (text) => /[\u4e00-\u9fa5]/.test(text);
@@ -217,7 +218,6 @@
         finished: true,
       };
       try {
-        console.log('尝试请求');
         const response = await updateDocumentSegment(
           documentId,
           segmentId,
@@ -233,16 +233,29 @@
     updateRows();
   };
 
-const handleFocus = (index) => {
-  activeBlock.value = index;
-};
+  const handleFocus = (index: number) => {
+    activeBlock.value = index;
+    getTerms(index);
+  };
 
-const handleBlur = async () => {
-  await nextTick(); 
-  setTimeout(() => {
-    activeBlock.value = -1;
-  }, 100); 
-};
+  const handleBlur = async () => {
+    await nextTick();
+    setTimeout(() => {
+      activeBlock.value = -1;
+    }, 100);
+  };
+
+  const getTerms = async (index: number) => {
+    const sourceText = segments.value[index].source_text;
+    try {
+      const response = await getGlossarySuggestion(sourceText);
+      if (response && response.data) {
+        console.log('Succeed to fetch terms', response.data);
+      }
+    } catch (error) {
+      console.log('Fail to fetch terms', error);
+    }
+  };
 
   watch([segments, pretransRes], updateRows, { deep: true });
 

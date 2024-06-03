@@ -220,7 +220,7 @@
         return t('menu.projects.manageFiles');
       case 'translatePage':
         return t('navbar.projects.translatePage');
-      case 'grossaryList':
+      case 'glossaryList':
         return t('menu.grossaries.management');
       case 'memorybankList':
         return t('menu.memorybanks.management');

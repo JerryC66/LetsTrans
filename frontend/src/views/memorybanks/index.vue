@@ -167,6 +167,7 @@
   main {
     margin-top: 100px;
     width: 82%;
+    height: calc(100vh - 200px);
   }
 
   .list {

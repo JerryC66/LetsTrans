@@ -15,7 +15,7 @@ const DASHBOARD: AppRouteRecordRaw = {
   children: [
     {
       path: '',
-      name: 'grossaryList',
+      name: 'glossaryList',
       component: () => import('@/views/glossaries/index.vue'),
       meta: {
         locale: 'menu.grossaries.list',

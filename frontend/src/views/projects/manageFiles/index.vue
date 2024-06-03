@@ -207,7 +207,7 @@
 <style scoped>
   .container {
     margin: 28px 28px;
-    height: 92%;
+    height: 92vh;
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
@@ -242,6 +242,7 @@
   main {
     margin-top: 100px;
     width: 82%;
+    height: calc(100vh - 200px);
   }
 
   .list {
