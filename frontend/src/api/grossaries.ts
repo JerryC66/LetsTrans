@@ -19,3 +19,4 @@ export const createGlossary = (data: {
     data,
   }) as Promise<HttpRes<any>>;
 };
+

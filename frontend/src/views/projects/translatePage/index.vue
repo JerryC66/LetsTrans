@@ -58,7 +58,7 @@
             <a-button
               @click="visible1 = true"
               size="large"
-              type="primary"
+              type="outline"
               shape="round"
               >{{ $t('translate.addterm') }}</a-button
             >
@@ -67,7 +67,7 @@
             <a-button
               @click="visible2 = true"
               size="large"
-              type="primary"
+              type="outline"
               shape="round"
               >{{ $t('translate.pretrans') }}</a-button
             >
@@ -77,38 +77,41 @@
     </nav>
     <main>
       <div class="left-side">
-        <div class="block">
+        <div
+          class="block"
+          v-for="(segment, index) in segments"
+          :key="'block-' + index"
+          
+        >
           <div class="left-wrapper">
-            <div
-              class="left-block"
-              v-for="(segment, index) in segments"
-              :key="'left-' + index"
-            >
+            <div class="left-block" :key="'left-' + index">
               <a-textarea
                 v-model="segment.source_text"
                 :auto-size="{
-                  minRows: rowsArray[index]
+                  minRows: rowsArray[index],
                 }"
               ></a-textarea>
             </div>
           </div>
           <div class="right-wrapper">
-            <div
-              class="right-block"
-              v-for="(result, index) in pretransRes"
-              :key="'right-' + index"
-            >
+            <div class="right-block" :key="'right-' + index">
               <a-textarea
-                v-model="result.target_text"
+                v-model="pretransRes[index].target_text"
                 :auto-size="{
-                  minRows: rowsArray[index]
+                  minRows: rowsArray[index],
                 }"
+                @focus="handleFocus(index)"
+                @blur="handleBlur"
               ></a-textarea>
             </div>
           </div>
-          <div class="confirm-btn"
->
-            <a-button type="primary" size="large">
+          <div class="confirm-btn">
+            <a-button
+              type="primary"
+              size="large"
+              :disabled="activeBlock !== index"
+              @click="updateSegment(index)"
+            >
               <template #icon>
                 <icon-check size="large" />
               </template>
@@ -132,12 +135,12 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, reactive, onMounted, watch } from 'vue';
+  import { computed, ref, reactive, onMounted, watch, nextTick } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useAppStore } from '@/store';
   import PreTransModal from '@/views/projects/components/pre-trans-modal/index.vue';
   import ImportGrossaryModal from '@/views/projects/components/import-grossary-modal/index.vue';
-  import { getDocumentSegments } from '@/api/documents';
+  import { getDocumentSegments, updateDocumentSegment } from '@/api/translate';
 
   const appStore = useAppStore();
   const router = useRouter();
@@ -153,35 +156,34 @@
   const document = ref<any>();
   const pretransRes = ref<any>([]);
   const rowsArray = ref<any>([]);
+  const activeBlock = ref(-1);
 
- 
-const calculateRows = (text1: string, text2: string) => {
-  const isChinese = (text) => /[\u4e00-\u9fa5]/.test(text);
-  const getRows = (text, isChineseText) => {
-    if (!text) return 2; 
-    const charsPerLine = isChineseText ? 20 : 40; 
-    return Math.max(3, Math.ceil(text.length / charsPerLine));
+  const calculateRows = (text1: string, text2: string) => {
+    const isChinese = (text) => /[\u4e00-\u9fa5]/.test(text);
+    const getRows = (text, isChineseText) => {
+      if (!text) return 2;
+      const charsPerLine = isChineseText ? 20 : 40;
+      return Math.max(3, Math.ceil(text.length / charsPerLine));
+    };
+
+    const chinese1 = isChinese(text1);
+    const chinese2 = isChinese(text2);
+    const row1 = getRows(text1, chinese1);
+    const row2 = getRows(text2, chinese2);
+    const maxRows = Math.max(row1, row2);
+
+    return maxRows;
   };
 
-  const chinese1 = isChinese(text1);
-  const chinese2 = isChinese(text2);
-  const row1 = getRows(text1, chinese1);
-  const row2 = getRows(text2, chinese2);
-  const maxRows = Math.max(row1, row2);
-
-  console.log(`Calculating rows for: ${text1} and ${text2}`);
-  console.log(`Calculated rows: ${maxRows}`);
-  return maxRows;
-};
-
-const updateRows = () => {
-  const newRows = segments.value.map((segment, index) => {
-    const pretransText = pretransRes.value[index] ? pretransRes.value[index].target_text : '';
-    return calculateRows(segment.source_text, pretransText);
-  });
-  rowsArray.value = newRows;  
-  console.log(rowsArray.value);
-};
+  const updateRows = () => {
+    const newRows = segments.value.map((segment, index) => {
+      const pretransText = pretransRes.value[index]
+        ? pretransRes.value[index].target_text
+        : '';
+      return calculateRows(segment.source_text, pretransText);
+    });
+    rowsArray.value = newRows;
+  };
 
   const fetchSegments = async () => {
     try {
@@ -190,6 +192,7 @@ const updateRows = () => {
       if (response && response.data) {
         segments.value = response.data.segments;
         document.value = response.data.document;
+        pretransRes.value = segments.value.map(() => ({ target_text: '' }));
         updateRows();
       }
     } catch (error) {
@@ -201,6 +204,45 @@ const updateRows = () => {
     pretransRes.value = data.segments;
     updateRows();
   };
+
+  const updateSegment = async (index) => {
+    const segment = segments.value[index];
+    const newText = pretransRes.value[index].target_text;
+    const documentId = Number(route.params.fileId);
+    const segmentId = segments.value[index].id;
+    console.log(newText, documentId, segmentId);
+    if (segment && newText) {
+      const data = {
+        targetText: newText,
+        finished: true,
+      };
+      try {
+        console.log('尝试请求');
+        const response = await updateDocumentSegment(
+          documentId,
+          segmentId,
+          data
+        );
+        if (response && response.data) {
+          console.log('Succeed to update segment', response.data);
+        }
+      } catch (error) {
+        console.log('Fail to update segment', error);
+      }
+    }
+    updateRows();
+  };
+
+const handleFocus = (index) => {
+  activeBlock.value = index;
+};
+
+const handleBlur = async () => {
+  await nextTick(); 
+  setTimeout(() => {
+    activeBlock.value = -1;
+  }, 100); 
+};
 
   watch([segments, pretransRes], updateRows, { deep: true });
 
@@ -329,7 +371,6 @@ const updateRows = () => {
       }
     }
   }
-
   main .left-side {
     overflow-y: scroll;
   }
