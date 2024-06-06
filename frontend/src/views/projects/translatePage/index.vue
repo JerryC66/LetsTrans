@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="container"
-    :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }"
-  >
+  <div class="container" :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }">
     <nav>
       <div class="row1">
         <div class="icons-bar">
@@ -24,27 +21,17 @@
             <a-typography-text>{{ document?.name }}</a-typography-text>
           </div>
           <div class="language">
-            <a-typography-text
-              >{{ document?.source_lang }} >
-              {{ document?.target_lang }}</a-typography-text
-            >
+            <a-typography-text>{{ document?.source_lang }} >
+              {{ document?.target_lang }}</a-typography-text>
           </div>
           <div class="progress">
-            <a-progress
-              :percent="document?.progress"
-              :style="{ width: '100%' }"
-            ></a-progress>
+            <a-progress :percent="document?.progress" :style="{ width: '100%' }"></a-progress>
           </div>
         </div>
       </div>
       <div class="row2">
         <div class="search-bar">
-          <a-input-search
-            size="large"
-            :style="{ width: '740px' }"
-            placeholder="Please enter something"
-            search-button
-          />
+          <a-input-search size="large" :style="{ width: '740px' }" placeholder="Please enter something" search-button />
         </div>
         <div class="btn-group">
           <div class="download">
@@ -55,62 +42,35 @@
             </a-button>
           </div>
           <div class="import">
-            <a-button
-              @click="visible1 = true"
-              size="large"
-              type="outline"
-              shape="round"
-              >{{ $t('translate.addterm') }}</a-button
-            >
+            <a-button @click="visible1 = true" size="large" type="outline" shape="round">{{ $t('translate.addterm')
+              }}</a-button>
           </div>
           <div class="pre-trans">
-            <a-button
-              @click="visible2 = true"
-              size="large"
-              type="outline"
-              shape="round"
-              >{{ $t('translate.pretrans') }}</a-button
-            >
+            <a-button @click="visible2 = true" size="large" type="outline" shape="round">{{ $t('translate.pretrans')
+              }}</a-button>
           </div>
         </div>
       </div>
     </nav>
     <main>
       <div class="left-side">
-        <div
-          class="block"
-          v-for="(segment, index) in segments"
-          :key="'block-' + index"
-        >
+        <div class="block" v-for="(segment, index) in segments" :key="'block-' + index">
           <div class="left-wrapper">
             <div class="left-block" :key="'left-' + index">
-              <a-textarea
-                v-model="segment.source_text"
-                :auto-size="{
+              <a-textarea v-model="segment.source_text" :auto-size="{
                   minRows: rowsArray[index],
-                }"
-              ></a-textarea>
+                }"></a-textarea>
             </div>
           </div>
           <div class="right-wrapper">
             <div class="right-block" :key="'right-' + index">
-              <a-textarea
-                v-model="pretransRes[index].target_text"
-                :auto-size="{
+              <a-textarea v-model="pretransRes[index].target_text" :auto-size="{
                   minRows: rowsArray[index],
-                }"
-                @focus="handleFocus(index)"
-                @blur="handleBlur"
-              ></a-textarea>
+                }" @focus="handleFocus(index)" @blur="handleBlur"></a-textarea>
             </div>
           </div>
           <div class="confirm-btn">
-            <a-button
-              type="primary"
-              size="large"
-              :disabled="activeBlock !== index"
-              @click="updateSegment(index)"
-            >
+            <a-button type="primary" size="large" :disabled="activeBlock !== index" @click="updateSegment(index)">
               <template #icon>
                 <icon-check size="large" />
               </template>
@@ -118,19 +78,24 @@
           </div>
         </div>
       </div>
-
       <div class="right-side">
-        <a-list>
-          <a-list-item>hello</a-list-item>
+        <a-divider v-if="termsList.length !== 0" orientation="center">{{ $t('glossary.list') }}</a-divider>
+        <a-list v-if="termsList.length !== 0" class="glossary-list">
+          <a-list-item v-for="(term, index) in termsList" :key="index">
+            {{ term.source_text }}
+            <a-divider direction="vertical"></a-divider>
+            {{ term.target }}
+          </a-list-item>
+        </a-list>
+        <a-divider v-if="memorybankList.length !== 0" orientation="center">{{ $t('memorybank.list') }}</a-divider>
+        <a-list v-if="memorybankList.length !== 0" class="memorybank-list">
+          <a-list-item> </a-list-item>
         </a-list>
       </div>
     </main>
   </div>
   <import-glossary-modal v-model:visible="visible1"></import-glossary-modal>
-  <pre-trans-modal
-    v-model:visible="visible2"
-    @pretransData="handlePretrans"
-  ></pre-trans-modal>
+  <pre-trans-modal v-model:visible="visible2" @pretransData="handlePretrans"></pre-trans-modal>
 </template>
 
 <script setup lang="ts">
@@ -158,13 +123,14 @@
   const rowsArray = ref<any>([]);
   const activeBlock = ref(-1);
   const termsList = ref([]);
+  const memorybankList = ref([]);
 
   const calculateRows = (text1: string, text2: string) => {
     const isChinese = (text) => /[\u4e00-\u9fa5]/.test(text);
     const getRows = (text, isChineseText) => {
       if (!text) return 2;
       const charsPerLine = isChineseText ? 20 : 40;
-      return Math.max(3, Math.ceil(text.length / charsPerLine));
+      return Math.max(2, Math.ceil(text.length / charsPerLine));
     };
 
     const chinese1 = isChinese(text1);
@@ -233,6 +199,19 @@
     updateRows();
   };
 
+  const getTerms = async (index: number) => {
+    const sourceText = segments.value[index].source_text;
+    try {
+      const response = await getGlossarySuggestion(sourceText);
+      if (response && response.data) {
+        termsList.value = response.data.terms;
+        console.log('termsList:', termsList);
+      }
+    } catch (error) {
+      console.log('Fail to fetch terms', error);
+    }
+  };
+
   const handleFocus = (index: number) => {
     activeBlock.value = index;
     getTerms(index);
@@ -243,18 +222,6 @@
     setTimeout(() => {
       activeBlock.value = -1;
     }, 100);
-  };
-
-  const getTerms = async (index: number) => {
-    const sourceText = segments.value[index].source_text;
-    try {
-      const response = await getGlossarySuggestion(sourceText);
-      if (response && response.data) {
-        console.log('Succeed to fetch terms', response.data);
-      }
-    } catch (error) {
-      console.log('Fail to fetch terms', error);
-    }
   };
 
   watch([segments, pretransRes], updateRows, { deep: true });

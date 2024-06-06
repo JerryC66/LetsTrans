@@ -39,5 +39,8 @@ export default {
   'translate.pretrans': 'Pre Trans',
   'translate.pretrans.description': 'Please choose api for pre-translation',
 
+  'glossary.list': 'Glossary List',
   'glossary.import': 'Import Glossary',
+
+  'memorybank.list': 'Memorybank List',
 };

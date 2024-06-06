@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model:visible="visible" width="auto">
-    <a-upload action="/">
+    <a-upload :action="url" :on-error="handleError">
       <template #upload-button>
         <div
           style="
@@ -9,7 +9,7 @@
             border: 1px dashed var(--color-fill-4);
             height: 158px;
             width: 380px;
-            border-radius: 2;
+            border-radius: 2px;
             line-height: 158px;
             text-align: center;
           "
@@ -25,13 +25,20 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, defineModel } from 'vue';
+  import { ref } from 'vue';
+  import { useRoute } from 'vue-router';
+  import type { FileItem } from '@arco-design/web-vue';
 
-  const visible = defineModel<boolean>('visible', {
-    type: Boolean,
-    default: false,
-    required: true,
-  });
+  const route = useRoute();
+  const visible = ref(false);
+
+  const { projectId } = route.params;
+  const url = `/projects/${projectId}/files`;
+
+  const handleError = (fileItem: FileItem) => {
+    console.error('Upload failed:', fileItem);
+    alert(`File upload failed: ${fileItem.response}`);
+  };
 </script>
 
 <style scoped></style>

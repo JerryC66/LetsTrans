@@ -41,5 +41,8 @@ export default {
   'translate.pretrans.success': '预翻译完成！',
   'translate.pretrans.fail': '出现了一些小错误...',
 
+  'glossary.list': '术语列表',
   'glossary.import': '导入术语库',
+
+  'memorybank.list': '记忆列表',
 };

@@ -101,7 +101,7 @@
               </div>
               <div class="progress">
                 <a-progress
-                  :percent="0.6"
+                  :percent="document.progress"
                   :style="{ width: '100%' }"
                 ></a-progress>
               </div>

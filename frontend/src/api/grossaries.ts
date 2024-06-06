@@ -77,8 +77,7 @@ export const updateGlossaryTerm = (
 
 export const getGlossarySuggestion = (sourceText: string) => {
   return request({
-    url: '/glossaries/suggestion',
+    url: `/glossaries/suggestion?source_text=${sourceText}`,
     method: 'GET',
-    data: sourceText,
   }) as Promise<HttpRes<any>>;
 };

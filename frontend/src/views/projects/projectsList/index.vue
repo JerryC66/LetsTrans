@@ -134,6 +134,7 @@
   import { useAppStore } from '@/store';
   import CreateProjectModal from '@/views/projects/components/create-project-modal/index.vue';
   import { getProjects, deleteProject } from '@/api/projects';
+  import { Modal } from '@arco-design/web-vue';
 
   const appStore = useAppStore();
   const router = useRouter();
@@ -202,10 +203,16 @@
     margin-top: 100px;
     width: 82%;
     height: calc(100vh - 200px);
+    overflow-y: scroll;
   }
 
   .list {
     background-color: rgba(252, 252, 252, 0.755);
+    /* overflow-y: scroll; */
+  }
+
+  main::-webkit-scrollbar {
+    display: none;
   }
 
   .list-item {
