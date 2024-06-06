@@ -107,14 +107,9 @@ func (pa *ProjectApi) DeleteProject(c *gin.Context) {
 
 func (pa *ProjectApi) AddDocument(c *gin.Context) {
 	jwtId := utils.GetUserID(c)
-	//authorInfo, err := userService.FindUserById(int(jwtId))
-	//if err != nil {
-	//	response.FailWithMessage(err.Error(), c)
-	//	return
-	//}
-
 	projId := utils.Param2Uint(c, "project_id")
 	if projId == 0 {
+		global.GVA_LOG.Error("project id error", zap.Int("project_id", int(projId)))
 		response.FailWithMessage("project id error", c)
 		return
 	}
@@ -128,8 +123,8 @@ func (pa *ProjectApi) AddDocument(c *gin.Context) {
 		var err error = nil
 		fileRecords[i], err = fileService.UploadFile(file) // 文件上传后拿到文件路径
 		if err != nil {
-			global.GVA_LOG.Error("修改数据库链接失败!", zap.Error(err))
-			response.FailWithMessage("修改数据库链接失败", c)
+			global.GVA_LOG.Error("存放文件失败!", zap.Error(err))
+			response.FailWithMessage("存放文件失败!", c)
 			return
 		}
 		docs[i], err = projectService.AddDocument(fileRecords[i].ID, jwtId, projId)

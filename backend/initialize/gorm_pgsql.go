@@ -4,6 +4,7 @@ import (
 	"github.com/firwoodlin/letstrans/config"
 	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/initialize/internal"
+	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -21,6 +22,8 @@ func GormPgSql() *gorm.DB {
 		PreferSimpleProtocol: false,
 	}
 	if db, err := gorm.Open(postgres.New(pgsqlConfig), internal.Gorm.Config(p.Prefix, p.Singular)); err != nil {
+		global.GVA_LOG.Error("GormPgSql error", zap.Dict("config", zap.Any("config", p)), zap.Error(err))
+		panic(err)
 		return nil
 	} else {
 		sqlDB, _ := db.DB()

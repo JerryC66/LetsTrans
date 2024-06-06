@@ -1,0 +1,31 @@
+# 忽略所有在.git目录中的文件
+.git/
+
+# 忽略 node_modules 目录，以保证容器内安装最新的依赖
+node_modules/
+
+# 忽略日志文件
+*.log
+
+# 忽略依赖文件，确保使用容器中的依赖配置
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# 忽略构建输出目录，如果它们在源代码仓库中
+/dist
+/build
+
+# 忽略编辑器和操作系统产生的文件
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 忽略测试和Markdown文件，不需要部署到生产环境
+*.md
+/test
+/tests
+/__tests__
+/__mocks__
