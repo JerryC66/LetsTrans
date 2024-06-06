@@ -1,7 +1,7 @@
 package letstrans
 
 import (
-	"fmt"
+	"errors"
 	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
 	"github.com/firwoodlin/letstrans/model/system"
@@ -16,16 +16,30 @@ type ProjectService struct{}
 
 func (p *ProjectService) CreateProject(req letstrans.Project) (proj letstrans.Project, err error) {
 	err = global.GVA_DB.Model(&letstrans.Project{}).Create(&req).Error
+	if err != nil {
+		global.GVA_LOG.Error("Create project failed", zap.Error(err))
+		return
+	}
 	return req, nil
 }
 
 func (p *ProjectService) GetProjectList(userID uint) (projects []letstrans.Project, err error) {
 	err = global.GVA_DB.Model(&letstrans.Project{}).Where("user_id = ?", userID).Find(&projects).Error
+	if err != nil {
+		global.GVA_LOG.Error("Get project list failed", zap.Error(err))
+		return nil, err
+
+	}
 	return projects, err
 }
 
 func (p *ProjectService) GetProjectByID(projID uint) (project letstrans.Project, err error) {
 	err = global.GVA_DB.Model(&letstrans.Project{}).Where("id = ?", projID).First(&project).Error
+	if err != nil {
+		global.GVA_LOG.Error("Get project by ID failed", zap.Error(err))
+		return project, err
+
+	}
 	return project, err
 }
 
@@ -34,16 +48,19 @@ func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (d
 	file := letstrans.FileRecord{}
 	err = global.GVA_DB.Model(&letstrans.FileRecord{}).Where("id = ?", fileID).First(&file).Error
 	if err != nil {
+		global.GVA_LOG.Error("Get file record failed", zap.Error(err))
 		return nil, err
 	}
 	author := system.SysUser{}
 	err = global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", authorID).First(&author).Error
 	if err != nil {
+		global.GVA_LOG.Error("Get author failed", zap.Error(err))
 		return nil, err
 	}
 	proj := letstrans.Project{}
 	err = global.GVA_DB.Model(&letstrans.Project{}).Where("id = ?", projID).First(&proj).Error
 	if err != nil {
+		global.GVA_LOG.Error("Get project failed", zap.Error(err))
 		return nil, err
 	}
 	doc = &letstrans.Document{
@@ -59,11 +76,13 @@ func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (d
 	}
 	err = global.GVA_DB.Model(&letstrans.Document{}).Create(&doc).Error
 	if err != nil {
+		global.GVA_LOG.Error("Create document failed", zap.Error(err))
 		return
 	}
 	// 开启 doc to seg 任务
 	segments, err := document.ProcessDocument(*doc)
 	if err != nil {
+		global.GVA_LOG.Error("Process document failed", zap.Error(err))
 		return
 	}
 	for i := range segments {
@@ -71,6 +90,7 @@ func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (d
 	}
 	err = global.GVA_DB.Model(&letstrans.Segment{}).Create(&segments).Error
 	if err != nil {
+		global.GVA_LOG.Error("Create segments failed", zap.Error(err))
 		return
 	}
 	return
@@ -79,11 +99,19 @@ func (p *ProjectService) AddDocument(fileID uint, authorID uint, projID uint) (d
 // DeleteDocuments 删除文档
 func (p *ProjectService) DeleteDocuments(fileIDs []uint, projID uint) (err error) {
 	err = global.GVA_DB.Model(&letstrans.Document{}).Where("file_id in (?) AND project_id = ?", fileIDs, projID).Delete(&letstrans.Document{}).Error
+	if err != nil {
+		global.GVA_LOG.Error("Delete documents failed", zap.Error(err))
+		return
+	}
 	return err
 }
 
 func (p *ProjectService) DeleteProject(projIDs []uint) (err error) {
 	err = global.GVA_DB.Model(&letstrans.Project{}).Where("id in (?)", projIDs).Delete(&letstrans.Project{}).Error
+	if err != nil {
+		global.GVA_LOG.Error("Delete project failed", zap.Error(err))
+		return
+	}
 	return err
 }
 
@@ -92,6 +120,7 @@ func (p *ProjectService) ExportDocument(fileIDs []uint, exportType string) (zipP
 	var documents []letstrans.Document
 	err = global.GVA_DB.Model(&letstrans.Document{}).Where("id in (?)", fileIDs).Find(&documents).Error
 	if err != nil {
+		global.GVA_LOG.Error("Get documents failed", zap.Error(err))
 		return "", err
 	}
 	// 导出的文件名
@@ -107,7 +136,7 @@ func (p *ProjectService) ExportDocument(fileIDs []uint, exportType string) (zipP
 	case letstrans.ET_Translated:
 		files = exportTranslatedFile(documents)
 	default:
-		return "", fmt.Errorf("unsupported export type: %s", exportType)
+		return "", errors.New("unsupported export type: %s" + exportType)
 	}
 	err = utils.ZipFiles(zipPath, files, ".", ".")
 	if err != nil {
