@@ -2,10 +2,12 @@ export default {
   // 菜单
   'menu.projects.management': 'Projects Management',
   'menu.projects.list': 'Projects List',
-  'menu.grossaries.management': 'Grossaries Management',
-  'menu.grossaries.list': 'Grossaries List',
+  'menu.glossaries.management': 'Glossaries Management',
+  'menu.glossaries.list': 'Glossaries List',
+  'menu.glossaries.glossaryTerms': 'Glosasary Terms',
   'menu.memorybanks.management': 'Memorybanks Management',
   'menu.memorybanks.list': 'Memorybanks List',
+
   'menu.projects.createProject': 'Create Project',
   'menu.projects.manageFiles': 'Manage Your Files',
   'menu.projects.uploadFile': 'Upload New File',
@@ -14,7 +16,7 @@ export default {
   // 导航栏
   'navbar.projects.management': 'Projects Management',
   'navbar.projects.translatePage': 'Translate Now',
-  'navbar.grossaries.management': 'Grossaries Management',
+  'navbar.glossaries.management': 'Glossaries Management',
   'navbar.memorybanks.management': 'Memorybanks Management',
 
   // 项目管理

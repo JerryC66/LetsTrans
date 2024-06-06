@@ -16,7 +16,7 @@ const DASHBOARD: AppRouteRecordRaw = {
     {
       path: '',
       name: 'memorybankList',
-      component: () => import('@/views/memorybanks/index.vue'),
+      component: () => import('@/views/memorybanks/memorybanksList/index.vue'),
       meta: {
         locale: 'menu.memorybanks.list',
         requiresAuth: true,

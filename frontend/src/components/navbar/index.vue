@@ -221,7 +221,7 @@
       case 'translatePage':
         return t('navbar.projects.translatePage');
       case 'glossaryList':
-        return t('menu.grossaries.management');
+        return t('menu.glossaries.management');
       case 'memorybankList':
         return t('menu.memorybanks.management');
       default:

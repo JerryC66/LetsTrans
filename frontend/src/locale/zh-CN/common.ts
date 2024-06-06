@@ -1,8 +1,8 @@
 export default {
   'menu.projects.management': '项目管理',
   'menu.projects.list': '项目列表',
-  'menu.grossaries.management': '术语库管理',
-  'menu.grossaries.list': '术语库列表',
+  'menu.glossaries.management': '术语库管理',
+  'menu.glossaries.list': '术语库列表',
   'menu.memorybanks.management': '记忆库管理',
   'menu.memorybanks.list': '记忆库列表',
   'menu.projects.createProject': '创建项目',
@@ -11,7 +11,7 @@ export default {
   'menu.projects.translate': '开始翻译吧！',
 
   'navbar.projects.management': '项目管理',
-  'navbar.grossaries.management': '术语库管理',
+  'navbar.glossaries.management': '术语库管理',
   'navbar.memorybanks.management': '记忆库管理',
   'navbar.projects.translatePage': '翻译吧',
 
@@ -43,6 +43,8 @@ export default {
 
   'glossary.list': '术语列表',
   'glossary.import': '导入术语库',
+  'glossary.import.success': '导入新术语成功',
+  'glossary.import.fail': '导入新术语失败',
 
   'memorybank.list': '记忆列表',
 };

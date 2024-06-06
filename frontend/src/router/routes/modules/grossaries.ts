@@ -6,7 +6,7 @@ const DASHBOARD: AppRouteRecordRaw = {
   name: 'glossariesHome',
   component: DEFAULT_LAYOUT,
   meta: {
-    locale: 'menu.grossaries.management',
+    locale: 'menu.glossaries.management',
     requiresAuth: true,
     icon: 'icon-book',
     order: 0,
@@ -16,12 +16,24 @@ const DASHBOARD: AppRouteRecordRaw = {
     {
       path: '',
       name: 'glossaryList',
-      component: () => import('@/views/glossaries/index.vue'),
+      component: () => import('@/views/glossaries/glossariesList/index.vue'),
       meta: {
-        locale: 'menu.grossaries.list',
+        locale: 'menu.glossaries.list',
         requiresAuth: true,
         roles: ['*'],
         showInMenu: true,
+      },
+    },
+    {
+      path: ':glossaryId/terms',
+      name: 'glossaryTerms',
+      component: () => import('@/views/glossaries/glossaryTerms/index.vue'),
+      meta: {
+        locale: 'menu.glossaries.glossaryTerms',
+        requiresAuth: true,
+        roles: ['*'],
+        showInMenu: false,
+        props: true,
       },
     },
   ],

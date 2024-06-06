@@ -37,7 +37,7 @@ export const getGlossaryTerms = (glossaryId: string) => {
 };
 
 export const addTermToGlossary = (
-  glossaryId: string,
+  glossaryId: number,
   data: {
     source_lang: string;
     target_lang: string;

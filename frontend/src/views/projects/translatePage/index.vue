@@ -109,7 +109,7 @@
               type="primary"
               size="large"
               :disabled="activeBlock !== index"
-              @click="() => updateSegment(index, segment.target_text)"
+              @click="updateSegment(index, segment.target_text)"
             >
               <template #icon>
                 <icon-check size="large" />
@@ -122,19 +122,31 @@
         <a-divider v-if="termsList.length !== 0" orientation="center">{{
           $t('glossary.list')
         }}</a-divider>
-        <a-list v-if="termsList.length !== 0" class="glossary-list">
-          <a-list-item v-for="(term, index) in termsList" :key="index">
-            {{ term.source_text }}
-            <a-divider direction="vertical"></a-divider>
-            {{ term.target_text }}
-          </a-list-item>
-        </a-list>
-        <a-divider v-if="memorybankList.length !== 0" orientation="center">{{
-          $t('memorybank.list')
-        }}</a-divider>
-        <a-list v-if="memorybankList.length !== 0" class="memorybank-list">
-          <a-list-item> </a-list-item>
-        </a-list>
+        <div style="margin-bottom: 20px">
+          <a-list v-if="termsList.length !== 0" class="glossary-list">
+            <a-list-item v-for="(term, index) in termsList" :key="index">
+              {{ term.source_text }}
+              <a-divider direction="vertical"></a-divider>
+              {{ term.target_text }}
+            </a-list-item>
+          </a-list>
+        </div>
+        <div>
+          <a-divider v-if="memorybankList.length !== 0" orientation="center">{{
+            $t('memorybank.list')
+          }}</a-divider>
+          <a-list v-if="memorybankList.length !== 0" class="memorybank-list">
+            <a-list-item
+              v-for="(memorybank, index) in memorybankList"
+              :key="index"
+            >
+              <a-divider>{{ index + 1 }}</a-divider>
+              {{ memorybank.source_text }}
+              <a-divider style="border-bottom-style: dotted"></a-divider>
+              {{ memorybank.target_text }}
+            </a-list-item>
+          </a-list>
+        </div>
       </div>
     </main>
   </div>
@@ -152,7 +164,8 @@
   import PreTransModal from '@/views/projects/components/pre-trans-modal/index.vue';
   import ImportGlossaryModal from '@/views/projects/components/import-glossary-modal/index.vue';
   import { getDocumentSegments, updateDocumentSegment } from '@/api/translate';
-  import { getGlossarySuggestion, addTermToGlossary } from '@/api/grossaries';
+  import { getGlossarySuggestion } from '@/api/glossaries';
+  import { getMemorySuggestion } from '@/api/memorybanks';
 
   const appStore = useAppStore();
   const translationStore = useTranslationStore();
@@ -251,9 +264,23 @@
     }
   };
 
+  const getMemorybanks = async (index: number) => {
+    const sourceText = segments.value[index].source_text;
+    try {
+      const response = await getMemorySuggestion(sourceText);
+      if (response && response.data) {
+        memorybankList.value = response.data.memories;
+        console.log('memorybanksList:', memorybankList);
+      }
+    } catch (error) {
+      console.log('Fail to fetch memorybanks', error);
+    }
+  };
+
   const handleFocus = (index: number) => {
     activeBlock.value = index;
     getTerms(index);
+    getMemorybanks(index);
   };
 
   const handleBlur = async () => {
@@ -399,11 +426,21 @@
       }
     }
   }
+
   main .left-side {
+    overflow-y: scroll;
+  }
+
+  main .right-side {
     overflow-y: scroll;
   }
 
   main .left-side::-webkit-scrollbar {
     display: none;
   }
+
+  main .right-side::-webkit-scrollbar {
+    display: none;
+  }
 </style>
+@/api/glossaries
