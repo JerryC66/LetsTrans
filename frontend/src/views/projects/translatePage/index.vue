@@ -1,5 +1,8 @@
 <template>
-  <div class="container" :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }">
+  <div
+    class="container"
+    :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }"
+  >
     <nav>
       <div class="row1">
         <div class="icons-bar">
@@ -21,17 +24,27 @@
             <a-typography-text>{{ document?.name }}</a-typography-text>
           </div>
           <div class="language">
-            <a-typography-text>{{ document?.source_lang }} >
-              {{ document?.target_lang }}</a-typography-text>
+            <a-typography-text
+              >{{ document?.source_lang }} >
+              {{ document?.target_lang }}</a-typography-text
+            >
           </div>
           <div class="progress">
-            <a-progress :percent="document?.progress" :style="{ width: '100%' }"></a-progress>
+            <a-progress
+              :percent="document?.progress"
+              :style="{ width: '100%' }"
+            ></a-progress>
           </div>
         </div>
       </div>
       <div class="row2">
         <div class="search-bar">
-          <a-input-search size="large" :style="{ width: '740px' }" placeholder="Please enter something" search-button />
+          <a-input-search
+            size="large"
+            :style="{ width: '740px' }"
+            placeholder="Please enter something"
+            search-button
+          />
         </div>
         <div class="btn-group">
           <div class="download">
@@ -42,35 +55,62 @@
             </a-button>
           </div>
           <div class="import">
-            <a-button @click="visible1 = true" size="large" type="outline" shape="round">{{ $t('translate.addterm')
-              }}</a-button>
+            <a-button
+              @click="visible1 = true"
+              size="large"
+              type="outline"
+              shape="round"
+              >{{ $t('translate.addterm') }}</a-button
+            >
           </div>
           <div class="pre-trans">
-            <a-button @click="visible2 = true" size="large" type="outline" shape="round">{{ $t('translate.pretrans')
-              }}</a-button>
+            <a-button
+              @click="visible2 = true"
+              size="large"
+              type="outline"
+              shape="round"
+              >{{ $t('translate.pretrans') }}</a-button
+            >
           </div>
         </div>
       </div>
     </nav>
     <main>
       <div class="left-side">
-        <div class="block" v-for="(segment, index) in segments" :key="'block-' + index">
+        <div
+          class="block"
+          v-for="(segment, index) in segments"
+          :key="'block-' + index"
+        >
           <div class="left-wrapper">
             <div class="left-block" :key="'left-' + index">
-              <a-textarea v-model="segment.source_text" :auto-size="{
+              <a-textarea
+                v-model="segment.source_text"
+                :auto-size="{
                   minRows: rowsArray[index],
-                }"></a-textarea>
+                }"
+              ></a-textarea>
             </div>
           </div>
           <div class="right-wrapper">
             <div class="right-block" :key="'right-' + index">
-              <a-textarea v-model="pretransRes[index].target_text" :auto-size="{
+              <a-textarea
+                v-model="segment.target_text"
+                :auto-size="{
                   minRows: rowsArray[index],
-                }" @focus="handleFocus(index)" @blur="handleBlur"></a-textarea>
+                }"
+                @focus="handleFocus(index)"
+                @blur="handleBlur"
+              ></a-textarea>
             </div>
           </div>
           <div class="confirm-btn">
-            <a-button type="primary" size="large" :disabled="activeBlock !== index" @click="updateSegment(index)">
+            <a-button
+              type="primary"
+              size="large"
+              :disabled="activeBlock !== index"
+              @click="() => updateSegment(index, segment.target_text)"
+            >
               <template #icon>
                 <icon-check size="large" />
               </template>
@@ -79,15 +119,19 @@
         </div>
       </div>
       <div class="right-side">
-        <a-divider v-if="termsList.length !== 0" orientation="center">{{ $t('glossary.list') }}</a-divider>
+        <a-divider v-if="termsList.length !== 0" orientation="center">{{
+          $t('glossary.list')
+        }}</a-divider>
         <a-list v-if="termsList.length !== 0" class="glossary-list">
           <a-list-item v-for="(term, index) in termsList" :key="index">
             {{ term.source_text }}
             <a-divider direction="vertical"></a-divider>
-            {{ term.target }}
+            {{ term.target_text }}
           </a-list-item>
         </a-list>
-        <a-divider v-if="memorybankList.length !== 0" orientation="center">{{ $t('memorybank.list') }}</a-divider>
+        <a-divider v-if="memorybankList.length !== 0" orientation="center">{{
+          $t('memorybank.list')
+        }}</a-divider>
         <a-list v-if="memorybankList.length !== 0" class="memorybank-list">
           <a-list-item> </a-list-item>
         </a-list>
@@ -95,19 +139,23 @@
     </main>
   </div>
   <import-glossary-modal v-model:visible="visible1"></import-glossary-modal>
-  <pre-trans-modal v-model:visible="visible2" @pretransData="handlePretrans"></pre-trans-modal>
+  <pre-trans-modal
+    v-model:visible="visible2"
+    @pretransData="handlePretrans"
+  ></pre-trans-modal>
 </template>
 
 <script setup lang="ts">
   import { computed, ref, reactive, onMounted, watch, nextTick } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { useAppStore } from '@/store';
+  import { useAppStore, useTranslationStore } from '@/store';
   import PreTransModal from '@/views/projects/components/pre-trans-modal/index.vue';
   import ImportGlossaryModal from '@/views/projects/components/import-glossary-modal/index.vue';
   import { getDocumentSegments, updateDocumentSegment } from '@/api/translate';
   import { getGlossarySuggestion, addTermToGlossary } from '@/api/grossaries';
 
   const appStore = useAppStore();
+  const translationStore = useTranslationStore();
   const router = useRouter();
   const route = useRoute();
 
@@ -117,8 +165,11 @@
     return appStore.theme;
   });
 
-  const segments = ref<any>([]);
-  const document = ref<any>();
+  const documentId = Number(route.params.fileId);
+  const document = computed(() => translationStore.documents[documentId]);
+  const segments = computed(() =>
+    document.value ? document.value.segments : []
+  );
   const pretransRes = ref<any>([]);
   const rowsArray = ref<any>([]);
   const activeBlock = ref(-1);
@@ -152,33 +203,21 @@
     rowsArray.value = newRows;
   };
 
-  const fetchSegments = async () => {
-    try {
-      const response = await getDocumentSegments(Number(route.params.fileId));
-      console.log('response:', response);
-      if (response && response.data) {
-        segments.value = response.data.segments;
-        document.value = response.data.document;
-        pretransRes.value = segments.value.map(() => ({ target_text: '' }));
-        updateRows();
-      }
-    } catch (error) {
-      console.log('Fail to fetch segments', error);
-    }
-  };
-
   const handlePretrans = (data) => {
     pretransRes.value = data.segments;
+    data.segments.forEach((segment, index) => {
+      translationStore.updateSegment(documentId, index, segment.target_text);
+    });
     updateRows();
   };
 
-  const updateSegment = async (index) => {
-    const segment = segments.value[index];
-    const newText = pretransRes.value[index].target_text;
-    const documentId = Number(route.params.fileId);
+  const updateSegment = async (index, newText) => {
+    console.log('updating...');
+    translationStore.updateSegment(documentId, index, newText);
+
     const segmentId = segments.value[index].id;
     console.log(newText, documentId, segmentId);
-    if (segment && newText) {
+    if (newText) {
       const data = {
         targetText: newText,
         finished: true,
@@ -219,14 +258,23 @@
 
   const handleBlur = async () => {
     await nextTick();
-    setTimeout(() => {
-      activeBlock.value = -1;
-    }, 100);
+    activeBlock.value = -1;
   };
 
   watch([segments, pretransRes], updateRows, { deep: true });
 
-  onMounted(fetchSegments);
+  onMounted(async () => {
+    try {
+      const response = await getDocumentSegments(documentId);
+      console.log('Fetched document segments:', response);
+      if (response && response.data) {
+        translationStore.addDocument(documentId, response.data);
+        updateRows();
+      }
+    } catch (error) {
+      console.error('Failed to fetch segments:', error);
+    }
+  });
 </script>
 
 <style scoped>
