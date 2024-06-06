@@ -3,6 +3,7 @@ package letstrans
 import (
 	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
+	"github.com/firwoodlin/letstrans/model/letstrans/response"
 	"strings"
 )
 
@@ -34,9 +35,19 @@ func (s *GlossaryService) DeleteGlossary(glossaryID uint) (err error) {
 	return err
 }
 
-func (s *GlossaryService) CreateTerm(term letstrans.Term) (err error) {
-	err = global.GVA_DB.Create(&term).Error
-	return err
+func (s *GlossaryService) CreateTerm(term letstrans.Term) (res *response.TermAddResponse, err error) {
+	var glossary letstrans.Glossary
+	if err = global.GVA_DB.Model(&letstrans.Glossary{}).Where("id = ?", term.GlossaryID).First(&glossary).Error; err != nil {
+		return res, err
+	}
+	if err = global.GVA_DB.Model(&letstrans.Term{}).Create(&term).Error; err != nil {
+		return res, err
+	}
+	res = &response.TermAddResponse{
+		Term:     term,
+		Glossary: glossary,
+	}
+	return
 }
 
 func (s *GlossaryService) GetTermsByGlossaryID(glossaryID uint) (terms []letstrans.Term, err error) {

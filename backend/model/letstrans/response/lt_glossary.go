@@ -6,3 +6,7 @@ type GlossaryResponse struct {
 	Glossary letstrans.Glossary `json:"glossary"`
 	Terms    []letstrans.Term   `json:"terms"`
 }
+type TermAddResponse struct {
+	Glossary letstrans.Glossary `json:"glossary"`
+	Term     letstrans.Term     `json:"term"`
+}

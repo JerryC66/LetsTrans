@@ -13,6 +13,10 @@ import (
 type GlossaryApi struct{}
 
 // CreateGlossary 创建术语库
+// 参数:
+//
+//	a *GlossaryApi: 实例对象，包含相关操作方法
+//	c *gin.Context: Gin框架的上下文，用于获取请求信息和发送响应
 func (a *GlossaryApi) CreateGlossary(c *gin.Context) {
 	var glossary letstrans.Glossary
 	if err := c.ShouldBindJSON(&glossary); err != nil {
@@ -122,12 +126,13 @@ func (a *GlossaryApi) CreateTerm(c *gin.Context) {
 
 	}
 
-	if err := glossaryService.CreateTerm(term); err != nil {
+	res, err := glossaryService.CreateTerm(term)
+	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 
-	response.Ok(c)
+	response.OkWithData(res, c)
 }
 
 // GetTermsByGlossary 获取术语库下的所有术语
