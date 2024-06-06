@@ -443,4 +443,3 @@
     display: none;
   }
 </style>
-@/api/glossaries

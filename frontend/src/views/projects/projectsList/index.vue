@@ -134,7 +134,6 @@
   import { useAppStore } from '@/store';
   import CreateProjectModal from '@/views/projects/components/create-project-modal/index.vue';
   import { getProjects, deleteProject } from '@/api/projects';
-  import { Modal } from '@arco-design/web-vue';
 
   const appStore = useAppStore();
   const router = useRouter();

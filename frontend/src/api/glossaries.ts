@@ -26,14 +26,14 @@ export const deleteGlossary = (glossaryId: string) => {
   return request({
     url: `/glossaries/${glossaryId}`,
     method: 'DELETE',
-  }) as Promise<HttpRes<any[]>>;
+  }) as Promise<HttpRes<any>>;
 };
 
-export const getGlossaryTerms = (glossaryId: string) => {
+export const getGlossaryTerms = (glossaryId: number) => {
   return request({
     url: `/glossaries/${glossaryId}`,
     method: 'GET',
-  }) as Promise<HttpRes<any[]>>;
+  }) as Promise<HttpRes<any>>;
 };
 
 export const addTermToGlossary = (
