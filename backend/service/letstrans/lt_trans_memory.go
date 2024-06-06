@@ -18,13 +18,14 @@ type SimilarSegment struct {
 }
 
 func (ts *TranslateMemoryService) GetSuggestions(sourceText string) (suggestions []letstrans.TranslationMemory, err error) {
-	segments := []letstrans.Segment{}
+	var segments []letstrans.Segment
 	//err := global.GVA_DB.Joins("JOIN documents ON documents.id = segments.document_id").
 	//	Where("documents.source_lang = ? AND documents.target_lang = ? documents.author_id = ? AND segments.finished = true",
 	//		sourceLang, targetLang, authorID).
 	//	Find(&segments).Error
-	err = global.GVA_DB.Model(&letstrans.Segment{}).Where(" segments.finished = true").Find(&segments).Error
+	err = global.GVA_DB.Model(&letstrans.Segment{}).Where("segments.finished = true").Order("id").Find(&segments).Error
 	if err != nil {
+		global.GVA_LOG.Error("Failed to get segments", zap.Error(err))
 		return
 	}
 	var similarSegments []SimilarSegment
@@ -50,7 +51,7 @@ func (ts *TranslateMemoryService) GetSuggestions(sourceText string) (suggestions
 			TargetText: simSeg.Segment.TargetText,
 			SimRank:    int64(i + 1),
 		})
-		global.GVA_LOG.Info("Segment similarity",
+		global.GVA_LOG.Debug("Segment similarity",
 			zap.String("source_text", simSeg.Segment.SourceText),
 			zap.Int("similarity", simSeg.Similarity))
 	}

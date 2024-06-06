@@ -1,0 +1,430 @@
+EN,ZH
+digital certificate,数字证书
+client,客户端
+client computer,客户端计算机
+cookie,cookie
+country/region-specific,国家/地区特定的
+credentials,凭据
+cryptography,加密
+data transfer,数据传输
+decryption,解密
+digital rights management,数字版权管理
+DRM,DRM
+digital signature,数字签名
+download,下载
+driver,驱动程序
+log,记录
+mailing list,邮件列表
+MB,MB
+megabyte,兆字节
+MIME,MIME
+Multipurpose Internet Mail Extensions,多用途 Internet 邮件扩展
+modem,调制解调器
+modulator/demodulator,调制解调器
+newsgroup,新闻组
+PDF,PDF
+permissions,权限
+pixel,像素
+pop-up window,弹出窗口
+proxy server,代理服务器
+Web page,网页
+web page,网页
+worm,蠕虫病毒
+ADO.NET,ADO.NET
+ASP.NET,ASP.NET
+common language runtime,公共语言运行时
+CLR,CLR
+expose,暴露
+managed code,托管代码
+safe code,安全代码
+Microsoft Visual Studio .NET,Microsoft Visual Studio .NET
+Visual Studio .NET,Visual Studio .NET
+Simple Object Access Protocol,简单对象访问协议
+SOAP,SOAP
+Web Services Description Language,Web Services 描述语言
+WSDL,WSDL
+backup device,备份设备
+backup medium,备份媒体
+backup set,备份集
+backward compatibility,后向兼容性
+backward compatible,后向兼容
+bad sector,坏扇区
+bad syntax,错误语法
+balanced hierarchy,均衡层次结构
+bandwidth,带宽
+bandwidth,带宽
+bandwidth throttling,带宽限制
+network bandwidth throttling,网络带宽限制
+banner,横幅
+banner page,标题页
+BAR,BAR
+base address register,基址寄存器
+bar chart,条形图
+bar code,条码
+bar code reader,条码读取器
+bar code scanner,条码扫描器
+base character,基本字符
+container application,容器应用程序
+container object,容器对象
+content pane,内容窗格
+content replication,内容复制
+Content Selection Framework,内容选择框架
+CSF,CSF
+content size,内容大小
+contention,争用
+context menu,上下文菜单
+shortcut menu,快捷菜单
+pop-up menu,弹出菜单
+context-sensitive Help,上下文相关帮助
+context-sensitive menu,上下文相关菜单
+contextual,上下文的
+contiguous,相邻的
+contiguous selection,连续选择
+range selection,范围选择
+continuous-tone image,连续色调图像
+contrast,对比度
+control,控件
+control,控制
+control bar,控件条 
+control code,控制代码
+Control Panel,控制面板
+control-break report,控制中断报表
+convention,约定
+conventional memory,低位存储区
+conversation mode,对话模式
+conversion,转换
+conversion function,转换函数
+conversion table,转换表
+conversion tool,转换工具
+convert,转换
+converter,转换器
+cooked mode,成熟模式
+coordinate,坐标
+coprocessor,协处理器
+copy,复制
+copy area,复制区域
+copy backup,复制备份
+copy protection,复制保护
+copy-on-write page protection,写入时复制页面保护
+copyright,版权所有
+copyright symbol,版权符号
+core,核心
+core model,核心模型
+correlated subquery,相关子查询
+corruption,损坏
+counter,计数器
+countersign,副署
+counter-signature,副署
+country code,国家/地区代码
+CPU cycle,CPU 周期
+CPU speed,CPU 速度
+CPU time,CPU 时间
+cradle,底座
+crash,故障
+crash,故障
+crash dump,故障转储
+crash recovery,故障修复
+crawl,爬网
+CRC,CRC
+cyclic redundancy check,循环冗余检验
+create,创建
+creation script,创建脚本
+creative content,有创意的内容
+critical error,关键错误
+critical section,关键部分
+crop,裁剪
+cross hatch,交叉阴影线
+cross join,交叉联接
+cross-forest authentication,跨林身份验证
+cross reference object,交叉引用对象
+crosstab query,交叉表查询
+cryptographic checksum,加密校验和
+cryptographic service provider,加密服务提供程序
+CSP,CSP
+CS Authentication resource,CS 验证资源
+cube,多维数据集
+currency LCID,货币 LCID
+currency locale identifier,货币区域标识符
+currency symbol,货币符号
+current,电流
+current directory,当前目录
+cursor,光标
+cursor data type,光标数据类型
+cursor library,游标库
+custom install,自定义安装
+custom price,自定义价格
+custom recipient,自定义接收人
+custom toolbar,自定义工具栏
+customize,自定义
+cut,剪切
+daemon,守护程序
+dagger,#
+daisy-wheel printer,菊花轮打印机
+dash,#VALUE!
+DAT,DAT
+digital audio tape,数字音频带
+data,数据
+data binding,数据绑定
+data bit,数据位
+data buffer,数据缓冲区
+data definition language,数据定义语言
+DDL,DDL
+data entry,数据输入
+data field,数据字段
+data file,数据文件
+data integrity,数据完整性
+data link,数据链接
+Data Link Control,数据链路控制
+DLC,DLC
+data marker,数据标记
+data migration,数据迁移
+data mining,数据挖掘
+data model,数据模型
+data processing,数据处理
+data provider,数据提供程序
+data set,数据集
+data sharing,数据共享
+data source,数据源
+data source name,数据源名称
+DSN,DSN
+data stream,数据流
+data structure,数据结构
+data terminal ready,数据终端就绪
+DTR,DTR
+data type,数据类型
+data warehouse,数据仓库
+Data Warehouse,数据仓库
+database,数据库
+database engine,数据库引擎
+database management system,数据库管理系统
+DBMS,DBMS
+data-link layer,数据链路层
+DCE,DCE
+Distributed Computing Environment,分布式计算环境
+DCOM,DCOM
+Distributed Component Object Model,分布式组件对象模型
+Distributed COM,分布式 COM
+Dynamic Data Exchange,动态数据交换
+deallocate,解除分配
+debug,调试
+debugger,调试程序
+decibel,分贝
+decimal,十进制
+DSS,DSS
+declaration,声明
+decompress,解压缩
+decompression,解压缩
+decrypt,解密
+default,默认
+default button,默认按钮
+defragment,碎片整理
+defragmentation,碎片整理
+DELETE key,删除键
+delegate,委托
+delete,删除
+delimiter,分隔符
+density,密度
+deploy,部署
+deployment,部署
+descriptor,描述符
+designated router,指定路由器
+designer,设计器
+design-time control,设计时控件
+desktop,桌面
+Desktop Management Interface,桌面管理接口
+DMI,DMI
+desktop publishing,桌面版
+destination,目标
+destination document,目标文档
+destructor,析构函数
+detach,拆离
+detect,检测
+detection,检测
+deterministic,确定性的
+device,设备
+DHCP,DHCP
+Dynamic Host Configuration Protocol,动态主机配置协议
+diacritical mark,标注字符
+diacritic,音调符号
+diagram,关系图
+dial,拨号
+dial tone,拨号音
+dialog,对话
+dialog bar,对话栏
+dialog box,对话框
+dial-up,拨号
+dial-up connection,拨号连接
+dieresis,分音符
+digest,摘要
+digital,数字的
+digital,数字的
+digital camera,数字相机
+digital signal processor,数字信号处理器
+DSP,DSP
+digital video disk,数字视盘(DVD)
+DVD,DVD
+digitally sign,数字签名
+digitizing tablet,数字绘图板
+dim,阴暗
+dimension,维度
+dimmed,变暗的
+unavailable,不可用的
+disabled,禁用的
+dingbat,丁贝符
+direct hosting,直接宿主连接
+direct mail,直邮邮件
+direct memory access,直接内存访问
+DMA,DMA
+directive,指令
+directory,目录
+directory replication,目录复制
+directory service,目录服务
+directory system agent,目录系统代理程序
+directory tree,目录树
+disable,禁用
+disassembly,反汇编
+disc,光盘
+discard,放弃
+disclaimer,免责
+discretionary access control list,自定义访问控制列表
+DACL,DACL
+disk,磁盘
+disk cache,高速磁盘缓存
+disk controller,磁盘控制器
+disk directory,磁盘目录
+dismount,卸除
+dispatch ID,调度 ID
+dispatcher,调度程序
+display,屏幕
+distance vector multicast routing protocol,远程矢量多播路由协议
+distinguished name,可分辨名称
+distribute,分布
+distributed database,分布式数据库
+distributed processing,分布式处理
+distributed computing,分布式计算
+Distributed Relational Database Architecture,分布式关系数据库结构
+DRDA,DRDA
+distribution list,通讯组列表
+distributor,分发服务器
+dithering,抖动
+divergence,扩散
+DLL,DLL
+dynamic-link library,动态链接库
+dock,连接
+docked toolbar,停靠工具栏
+docking station,扩展坞
+document,文档
+document,文档
+document type definition,文档类型定义
+DTD,DTD
+document window,文档窗口
+domain,域
+domain,域
+domain,域
+domain controller,域控制器
+domain name,域名
+Domain Name Service,域名服务
+Domain Name System,域名系统
+DNS,DNS
+dongle,硬件保护装置
+MS-DOS prompt,MS-DOS 提示符
+dot-matrix printer,点阵打印机
+dots per inch,每英寸点数
+DPI,dpi
+double word,双字
+double-click,双击
+double-density disk,双密度盘
+double-sided disk,双面磁盘
+downloadable font,可下载字体
+distributed password authentication,分布式密码验证
+DPA,DPA
+draft,草稿
+drag,拖动
+dynamic random access memory,动态随机存取存储器
+drawing,绘图
+drill down,向下钻取
+drill up,向上钻取
+drive,驱动器
+drive letter,驱动器号
+drop-down combo box,下拉组合框
+drop-down menu,下拉菜单
+dump,转储
+duplicate,副本
+duplicate,复制
+dword,DWORD/双字
+dynamic,动态的
+dynamic cloaking,动态掩蔽
+dynamic cursor,动态游标
+dynamic disk,动态磁盘
+dynamic HTML,动态 HTML
+early binding,早期绑定
+static binding,静态绑定
+eBook,电子图书
+echo request,回显请求
+ECMA,ECMA
+Ecma International,Ecma International
+EDI,EDI
+electronic data interchange,电子数据交换
+edit,编辑
+edit,编辑
+edit control,编辑控件
+edit mode,编辑模式
+editing keys,编辑键
+editor,编辑器
+EDO RAM,EDO RAM
+EIA,EIA
+Electronics Industries Association,美国电子工业协会
+hat switch,顶帽控制器
+AM,AM
+amplitude modulation,调幅
+API,API
+application programming interface,应用程序编程接口
+caret,脱字号
+COM port,COM 端口
+communications port,通信端口
+serial port,串行端口
+command line interface,命令行接口
+content source,内容源
+CRL issuer,CRL 颁发商
+eject,弹出
+element,元素
+element declaration,元素声明
+ellipse,椭圆形
+electronic mail,电子邮件
+e-mail server,电子邮件服务器
+embed,嵌入
+emboss,浮雕
+empty,空
+en dash,短破折号
+enable,启用
+encapsulated PostScript, 封装的 PostScript
+EPS,EPS
+encapsulating security payload,封装式安全措施负载
+ESP,ESP
+In-Place Archive,就地存档
+topic branch,主题分支
+stash,存储
+rebase,重定基本值
+archive mailbox,存档邮箱
+multi-factor authentication,多重身份验证
+token,令牌
+on-screen instructions,屏幕说明
+forced failover,强制故障转移
+heap or B-tree,堆或B 树
+EA,EA
+post alert,帖子提醒
+trend alert,走向提醒
+Microsoft Store,Microsoft 商店
+next-of-kin process,近亲帐户信息转移流程
+Office 365 Message Encryption,Office 365 邮件加密
+Properties,属性
+index,索引
+index,索引
+Microsoft Office 365 Personal,Microsoft Office 365 个人版
+Microsoft Office 365 Home,Microsoft Office 365 家庭版
+spot-check report,抽查报告
+Windows Phone app,Windows Phone 应用
+network gateway,网关
+Standard_Dn_v2 Cloud Services,Standard_Dn_v2 云服务
+Standard_Dn_v2 VM (Non-Windows),Standard_Dn_v2 VM（非 Windows）
+Standard_Dn_v2 VM (Windows),Standard_Dn_v2 VM (Windows)
