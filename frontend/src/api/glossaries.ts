@@ -61,7 +61,7 @@ export const importGossaryCSV = (glossaryId: string, file: FormData) => {
 };
 
 export const updateGlossaryTerm = (
-  termId: string,
+  termId: number,
   data: {
     source_lang: string;
     target_lang: string;

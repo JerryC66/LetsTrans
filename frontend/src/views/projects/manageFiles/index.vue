@@ -120,7 +120,7 @@
               </div>
               <div class="icons">
                 <div class="download">
-                  <a-popconfirm content="conform to download this project?">
+                  <a-popconfirm content="conform to download this file?">
                     <icon-download />
                   </a-popconfirm>
                 </div>
@@ -132,7 +132,7 @@
                         document.file_id
                       )
                     "
-                    content="conform to delete this project?"
+                    content="conform to delete this file?"
                     type="error"
                   >
                     <icon-delete />

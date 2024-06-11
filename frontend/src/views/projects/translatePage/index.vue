@@ -7,16 +7,16 @@
       <div class="row1">
         <div class="icons-bar">
           <a-space size="medium">
-            <icon-oblique-line size="24" />
-            <icon-copy size="24" />
-            <icon-quote size="24" />
-            <icon-redo size="24" />
-            <icon-scissor size="24" />
-            <icon-undo size="24" />
-            <icon-zoom-in size="24" />
-            <icon-zoom-out size="24" />
-            <icon-sort size="24" />
-            <icon-underline size="24" />
+            <icon-oblique-line class="icon" size="22" />
+            <icon-copy :class="iconClass" size="22" />
+            <icon-quote :class="iconClass" size="22" />
+            <icon-redo :class="iconClass" size="22" />
+            <icon-scissor :class="iconClass" size="22" />
+            <icon-undo :class="iconClass" size="22" />
+            <icon-zoom-in :class="iconClass" size="22" />
+            <icon-zoom-out :class="iconClass" size="22" />
+            <icon-sort :class="iconClass" size="22" />
+            <icon-underline :class="iconClass" size="22" />
           </a-space>
         </div>
         <div class="record-bar">
@@ -177,6 +177,9 @@
   const theme = computed(() => {
     return appStore.theme;
   });
+  const iconClass = computed(() => {
+    return theme.value === 'light' ? '' : 'icon-dark';
+  });
 
   const documentId = Number(route.params.fileId);
   const document = computed(() => translationStore.documents[documentId]);
@@ -220,6 +223,7 @@
     pretransRes.value = data.segments;
     data.segments.forEach((segment, index) => {
       translationStore.updateSegment(documentId, index, segment.target_text);
+      console.log('pretrans data:', pretransRes.value);
     });
     updateRows();
   };
@@ -305,6 +309,10 @@
 </script>
 
 <style scoped>
+  .icon-dark {
+    color: rgb(216, 222, 227);
+  }
+
   .container {
     margin: 28px 28px;
     height: 92vh;

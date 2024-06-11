@@ -3,6 +3,13 @@
     class="container"
     :style="{ backgroundColor: theme === 'light' ? 'white' : 'black' }"
   >
+    <nav>
+      <div class="import_glossary">
+        <a-button type="primary" size="large" @click="visible = true">{{
+          $t('glossary.import')
+        }}</a-button>
+      </div>
+    </nav>
     <div class="terms-list">
       <a-list>
         <a-list-item v-for="(term, index) in terms" :key="index">
@@ -20,19 +27,22 @@
           </div>
 
           <template #actions>
-            <icon-edit />
+            <icon-edit @click="visible = true" />
             <icon-delete />
           </template>
         </a-list-item>
       </a-list>
     </div>
   </div>
+  <edit-term-modal v-model:visible="visible"></edit-term-modal>
 </template>
 
 <script setup lang="ts">
   import { computed, ref, onMounted } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import { useAppStore } from '@/store';
+
+  import editTermModal from '@/views/glossaries/components/edit-term-modal/index.vue';
 
   import { getGlossaryTerms } from '@/api/glossaries';
 
@@ -46,16 +56,6 @@
   });
   const glossaryId = Number(route.params.glossaryId);
 
-  interface Term {
-    id: number;
-    document_id: string;
-    created_at: string;
-    updated_at: string;
-    source_lang: string;
-    target_lang: string;
-    source_text: string;
-    target_text: string;
-  }
   const terms = ref<any>([]);
   const glossaryName = ref<string>('');
 
@@ -85,8 +85,19 @@
     align-items: center;
   }
 
+  nav {
+    width: 82%;
+    top: 140px;
+    position: absolute;
+
+    .import_glossary {
+      margin-left: 180px;
+    }
+  }
+
   .terms-list {
-    margin-top: 80px;
+    width: 70%;
+    margin-top: 120px;
     overflow-y: scroll;
   }
 
@@ -97,5 +108,7 @@
   .wrapper {
     display: flex;
     justify-content: space-between;
+    margin-right: 100px;
+    padding-left: 20px;
   }
 </style>

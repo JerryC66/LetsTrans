@@ -6,7 +6,7 @@
     <nav>
       <div class="import_glossary">
         <a-button type="primary" size="large" @click="visible = true">{{
-          $t('glossary.import')
+          $t('glossary.create')
         }}</a-button>
       </div>
     </nav>
@@ -53,14 +53,15 @@
       </div>
     </main>
   </div>
+  <create-glossary-modal v-model:visible="visible"></create-glossary-modal>
 </template>
 
 <script setup lang="ts">
   import { computed, ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { useAppStore } from '@/store';
-
   import { getGlossaries } from '@/api/glossaries';
+  import CreateGlossaryModal from '@/views/glossaries/components/create-glossary-modal/index.vue';
 
   const appStore = useAppStore();
   const router = useRouter();

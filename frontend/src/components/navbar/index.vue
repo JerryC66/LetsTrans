@@ -224,6 +224,8 @@
         return t('menu.glossaries.management');
       case 'memorybankList':
         return t('menu.memorybanks.management');
+      case 'glossaryTerms':
+        return t('menu.glossaries.termsList');
       default:
         return t('menu.projects.management');
     }

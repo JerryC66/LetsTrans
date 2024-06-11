@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model:visible="visible" width="auto">
-    <a-upload :action="url" :on-error="handleError">
+    <a-upload :action="url" @error="handleError" name="file">
       <template #upload-button>
         <div
           style="

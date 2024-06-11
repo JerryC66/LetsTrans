@@ -34,9 +34,9 @@
                 :style="{ width: '180px' }"
                 placeholder="source language"
               >
-                <a-option>zh</a-option>
-                <a-option>en</a-option>
-                <a-option>ja</a-option>
+                <a-option>ZH</a-option>
+                <a-option>EN</a-option>
+                <a-option>JA</a-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -51,9 +51,9 @@
                 :style="{ width: '180px' }"
                 placeholder="target language"
               >
-                <a-option>zh</a-option>
-                <a-option>en</a-option>
-                <a-option>ja</a-option>
+                <a-option>ZH</a-option>
+                <a-option>EN</a-option>
+                <a-option>JA</a-option>
               </a-select>
             </a-form-item>
           </a-col>

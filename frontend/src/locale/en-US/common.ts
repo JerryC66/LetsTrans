@@ -43,6 +43,7 @@ export default {
 
   'glossary.list': 'Glossary List',
   'glossary.import': 'Import Glossary',
+  'glossary.editTerm': 'Edit Term',
 
   'memorybank.list': 'Memorybank List',
 };
