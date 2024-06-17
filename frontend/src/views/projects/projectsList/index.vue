@@ -206,7 +206,7 @@
   }
 
   .list {
-    background-color: rgba(252, 252, 252, 0.755);
+    background-color: rgb(255, 252, 252);
     /* overflow-y: scroll; */
   }
 

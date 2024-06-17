@@ -16,7 +16,6 @@ export default {
   'navbar.memorybanks.management': '记忆库管理',
   'navbar.projects.translatePage': '翻译吧',
 
-  // 项目管路
   'project.name': '项目名称',
   'project.progress': '进度',
   'project.language': '语言',
@@ -52,6 +51,5 @@ export default {
   'glossary.create': '创建术语库',
   'glossary.create.success': '创建术语库成功',
   'glossary.create.fail': '创建术语库失败',
-
   'memorybank.list': '记忆列表',
 };
