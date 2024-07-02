@@ -7,19 +7,23 @@ interface FileUploadResponse {
   filetype: string;
 }
 
-export const uploadFile = (fileData: FormData) => {
-  return request({
-    url: '/files',
-    method: 'POST',
-    data: fileData,
-    headers: { 'Content-Type': 'multipart/form-data' },
-  }) as Promise<HttpRes<FileUploadResponse>>;
-};
+// export const uploadFile = (fileData: FormData) => {
+//   return request({
+//     url: '/files',
+//     method: 'POST',
+//     data: fileData,
+//     headers: { 'Content-Type': 'multipart/form-data' },
+//   }) as Promise<HttpRes<FileUploadResponse>>;
+// };
 
-export const addFileToProject = (projectId: number) => {
+export const addFileToProject = (projectId: number, data: FormData) => {
   return request({
     url: `/projects/${projectId}/files`,
     method: 'POST',
+    data,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    }
   }) as Promise<HttpRes<any>>;
 };
 
