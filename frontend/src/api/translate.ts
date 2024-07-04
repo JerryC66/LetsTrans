@@ -14,7 +14,7 @@ export const updateDocumentSegment = (
   data: {
     targetText: string;
     finished: boolean;
-  }
+  },
 ) => {
   return request({
     url: `/documents/${documentId}/segments/${segmentId}`,

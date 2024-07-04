@@ -21,17 +21,17 @@
         </div>
         <div class="record-bar">
           <div class="file-name">
-            <a-typography-text>{{ document?.name }}</a-typography-text>
+            <a-typography-text>{{ thisDocument?.name }}</a-typography-text>
           </div>
           <div class="language">
             <a-typography-text
-              >{{ document?.source_lang }} >
-              {{ document?.target_lang }}</a-typography-text
+              >{{ thisDocument?.source_lang }} >
+              {{ thisDocument?.target_lang }}</a-typography-text
             >
           </div>
           <div class="progress">
             <a-progress
-              :percent="document?.progress"
+              :percent="thisDocument?.progress"
               :style="{ width: '100%' }"
             ></a-progress>
           </div>
@@ -109,6 +109,7 @@
               type="primary"
               size="large"
               :disabled="activeBlock !== index"
+              @mousedown="preventBlur"
               @click="updateSegment(index, segment.target_text)"
             >
               <template #icon>
@@ -119,11 +120,11 @@
         </div>
       </div>
       <div class="right-side">
-        <a-divider v-if="termsList.length !== 0" orientation="center">{{
+        <a-divider v-if="termsList?.length !== 0" orientation="center">{{
           $t('glossary.list')
         }}</a-divider>
         <div style="margin-bottom: 20px">
-          <a-list v-if="termsList.length !== 0" class="glossary-list">
+          <a-list v-if="termsList?.length !== 0" class="glossary-list">
             <a-list-item v-for="(term, index) in termsList" :key="index">
               {{ term.source_text }}
               <a-divider direction="vertical"></a-divider>
@@ -182,9 +183,9 @@
   });
 
   const documentId = Number(route.params.fileId);
-  const document = computed(() => translationStore.documents[documentId]);
+  const thisDocument = computed(() => translationStore.documents[documentId]);
   const segments = computed(() =>
-    document.value ? document.value.segments : []
+    thisDocument.value ? thisDocument.value.segments : [],
   );
   const pretransRes = ref<any>([]);
   const rowsArray = ref<any>([]);
@@ -243,10 +244,10 @@
         const response = await updateDocumentSegment(
           documentId,
           segmentId,
-          data
+          data,
         );
         if (response && response.data) {
-          console.log('Succeed to update segment', response.data);
+          console.log('Succeed to update segment', data, response.data);
         }
       } catch (error) {
         console.log('Fail to update segment', error);
@@ -283,13 +284,21 @@
 
   const handleFocus = (index: number) => {
     activeBlock.value = index;
+    console.log('block', activeBlock.value, 'active');
     getTerms(index);
     getMemorybanks(index);
   };
 
-  const handleBlur = async () => {
-    await nextTick();
-    activeBlock.value = -1;
+  const handleBlur = () => {
+    nextTick(() => {
+      if (!document.activeElement.closest('.confirm-btn')) {
+        activeBlock.value = -1;
+      }
+    });
+  };
+
+  const preventBlur = (event: MouseEvent) => {
+    event.preventDefault();
   };
 
   watch([segments, pretransRes], updateRows, { deep: true });

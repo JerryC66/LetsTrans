@@ -120,7 +120,17 @@
               </div>
               <div class="icons">
                 <div class="download">
-                  <a-popconfirm content="conform to download this file?">
+                  <a-popconfirm
+                    @ok="
+                      downloadFiles(
+                        Number(route.params.projectId),
+                        document.file_id,
+                        'translated',
+                      )
+                    "
+                    content="conform to download this file?"
+                    type="info"
+                  >
                     <icon-download />
                   </a-popconfirm>
                 </div>
@@ -129,7 +139,7 @@
                     @ok="
                       handleDelete(
                         Number(route.params.projectId),
-                        document.file_id
+                        document.file_id,
                       )
                     "
                     content="conform to delete this file?"
@@ -155,7 +165,7 @@
 
   import UploadFileModal from '@/views/projects/components/upload-file-modal/index.vue';
   import { getProjectDetail } from '@/api/projects';
-  import { deleteFileFromProject } from '@/api/files';
+  import { deleteFileFromProject, downloadFiles } from '@/api/files';
 
   const appStore = useAppStore();
   const router = useRouter();

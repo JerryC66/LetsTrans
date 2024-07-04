@@ -17,7 +17,7 @@ services:
       - doc-processor
       - deeplx
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8098/health" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8098/health"]
       interval: 1m
       timeout: 10s
       retries: 3

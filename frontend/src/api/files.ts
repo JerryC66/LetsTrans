@@ -23,7 +23,7 @@ export const addFileToProject = (projectId: number, data: FormData) => {
     data,
     headers: {
       'Content-Type': 'multipart/form-data',
-    }
+    },
   }) as Promise<HttpRes<any>>;
 };
 
@@ -38,7 +38,7 @@ export const deleteFileFromProject = (projectId: number, fileIds: number[]) => {
 export const downloadFiles = (
   projectId: number,
   documentIds: number[],
-  type: 'origin' | 'translated'
+  type: 'origin' | 'translated',
 ) => {
   return request({
     url: `/projects/${projectId}/files`,

@@ -7,10 +7,11 @@ LetsTrans 是一个 Web 端计算机辅助翻译系统，旨在为用户提供�
 ## 🚀 技术选型
 
 ### 前端
+
 - 语言及其框架：ts + vue
-- 构建工具：vite 
+- 构建工具：vite
 - 组件库：arcodesign
-- 状态管理库：pinia 
+- 状态管理库：pinia
 - 代码格式化：prettier
 
 ### 后端
@@ -19,16 +20,9 @@ LetsTrans 是一个 Web 端计算机辅助翻译系统，旨在为用户提供�
 
 - 数据库：PostgreSQL
 
-
-
-
-
-
 ## 📕 项目文档
 
 见 [docs](docs) 目录。
-
-
 
 ## 💪 项目开发者
 
@@ -57,6 +51,5 @@ LetsTrans 是一个 Web 端计算机辅助翻译系统，旨在为用户提供�
     </td>
   </tr>
 </table>
-
 
 ## 🌈 功能展示

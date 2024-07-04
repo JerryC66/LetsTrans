@@ -43,7 +43,7 @@ export const addTermToGlossary = (
     target_lang: string;
     source_text: string;
     target_text: string;
-  }
+  },
 ) => {
   return request({
     url: `/glossaries/${glossaryId}/terms`,
@@ -67,7 +67,7 @@ export const updateGlossaryTerm = (
     target_lang: string;
     source_text: string;
     target_text: string;
-  }
+  },
 ) => {
   return request({
     url: `/glossaries/terms/${termId}`,
