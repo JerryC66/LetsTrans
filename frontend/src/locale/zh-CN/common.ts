@@ -1,21 +1,21 @@
 export default {
   'menu.projects.management': '项目管理',
   'menu.projects.list': '项目列表',
-  'menu.grossaries.management': '术语库管理',
-  'menu.grossaries.list': '术语库列表',
+  'menu.glossaries.management': '术语库管理',
+  'menu.glossaries.list': '术语库列表',
   'menu.memorybanks.management': '记忆库管理',
   'menu.memorybanks.list': '记忆库列表',
   'menu.projects.createProject': '创建项目',
   'menu.projects.manageFiles': '文件管理',
   'menu.projects.uploadFile': '上传文件',
   'menu.projects.translate': '开始翻译吧！',
+  'menu.glossaries.termsList': '术语列表',
 
   'navbar.projects.management': '项目管理',
-  'navbar.grossaries.management': '术语库管理',
+  'navbar.glossaries.management': '术语库管理',
   'navbar.memorybanks.management': '记忆库管理',
   'navbar.projects.translatePage': '翻译吧',
 
-  // 项目管路
   'project.name': '项目名称',
   'project.progress': '进度',
   'project.language': '语言',
@@ -43,6 +43,13 @@ export default {
 
   'glossary.list': '术语列表',
   'glossary.import': '导入术语库',
-
+  'glossary.import.success': '导入新术语成功',
+  'glossary.import.fail': '导入新术语失败',
+  'glossary.editTerm': '修改术语',
+  'glossary.update.success': '修改术语成功',
+  'glossary.update.fail': '修改术语失败',
+  'glossary.create': '创建术语库',
+  'glossary.create.success': '创建术语库成功',
+  'glossary.create.fail': '创建术语库失败',
   'memorybank.list': '记忆列表',
 };

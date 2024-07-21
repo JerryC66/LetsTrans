@@ -30,23 +30,22 @@ redis:
     - "172.21.0.4:7001"
     - "172.21.0.2:7002"
 
-
 # mongo configuration
 mongo:
-  coll: ''
-  options: ''
-  database: ''
-  username: ''
-  password: ''
-  auth-source: ''
+  coll: ""
+  options: ""
+  database: ""
+  username: ""
+  password: ""
+  auth-source: ""
   min-pool-size: 0
   max-pool-size: 100
   socket-timeout-ms: 0
   connect-timeout-ms: 0
   is-zap: false
   hosts:
-    - host: ''
-      port: ''
+    - host: ""
+      port: ""
 
 # system configuration
 system:
@@ -55,7 +54,7 @@ system:
   db-type: pgsql
   oss-type: local # 控制 oss 选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
   use-redis: false # 使用redis
-  use-mongo: false     # 使用mongo
+  use-mongo: false # 使用mongo
   use-multipoint: false
   # IP限制次数 一个小时15000次
   iplimit-count: 15000
@@ -76,7 +75,7 @@ captcha:
 # 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
 pgsql:
   path: "localhost"
-#  path: "host.docker.internal"
+  #  path: "host.docker.internal"
   port: "5432"
   config: ""
   db-name: "lets_trans"

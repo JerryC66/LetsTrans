@@ -7,31 +7,31 @@
       <div class="row1">
         <div class="icons-bar">
           <a-space size="medium">
-            <icon-oblique-line size="24" />
-            <icon-copy size="24" />
-            <icon-quote size="24" />
-            <icon-redo size="24" />
-            <icon-scissor size="24" />
-            <icon-undo size="24" />
-            <icon-zoom-in size="24" />
-            <icon-zoom-out size="24" />
-            <icon-sort size="24" />
-            <icon-underline size="24" />
+            <icon-oblique-line class="icon" size="22" />
+            <icon-copy :class="iconClass" size="22" />
+            <icon-quote :class="iconClass" size="22" />
+            <icon-redo :class="iconClass" size="22" />
+            <icon-scissor :class="iconClass" size="22" />
+            <icon-undo :class="iconClass" size="22" />
+            <icon-zoom-in :class="iconClass" size="22" />
+            <icon-zoom-out :class="iconClass" size="22" />
+            <icon-sort :class="iconClass" size="22" />
+            <icon-underline :class="iconClass" size="22" />
           </a-space>
         </div>
         <div class="record-bar">
           <div class="file-name">
-            <a-typography-text>{{ document?.name }}</a-typography-text>
+            <a-typography-text>{{ thisDocument?.name }}</a-typography-text>
           </div>
           <div class="language">
             <a-typography-text
-              >{{ document?.source_lang }} >
-              {{ document?.target_lang }}</a-typography-text
+              >{{ thisDocument?.source_lang }} >
+              {{ thisDocument?.target_lang }}</a-typography-text
             >
           </div>
           <div class="progress">
             <a-progress
-              :percent="document?.progress"
+              :percent="thisDocument?.progress"
               :style="{ width: '100%' }"
             ></a-progress>
           </div>
@@ -109,7 +109,8 @@
               type="primary"
               size="large"
               :disabled="activeBlock !== index"
-              @click="() => updateSegment(index, segment.target_text)"
+              @mousedown="preventBlur"
+              @click="updateSegment(index, segment.target_text)"
             >
               <template #icon>
                 <icon-check size="large" />
@@ -119,22 +120,34 @@
         </div>
       </div>
       <div class="right-side">
-        <a-divider v-if="termsList.length !== 0" orientation="center">{{
+        <a-divider v-if="termsList?.length !== 0" orientation="center">{{
           $t('glossary.list')
         }}</a-divider>
-        <a-list v-if="termsList.length !== 0" class="glossary-list">
-          <a-list-item v-for="(term, index) in termsList" :key="index">
-            {{ term.source_text }}
-            <a-divider direction="vertical"></a-divider>
-            {{ term.target_text }}
-          </a-list-item>
-        </a-list>
-        <a-divider v-if="memorybankList.length !== 0" orientation="center">{{
-          $t('memorybank.list')
-        }}</a-divider>
-        <a-list v-if="memorybankList.length !== 0" class="memorybank-list">
-          <a-list-item> </a-list-item>
-        </a-list>
+        <div style="margin-bottom: 20px">
+          <a-list v-if="termsList?.length !== 0" class="glossary-list">
+            <a-list-item v-for="(term, index) in termsList" :key="index">
+              {{ term.source_text }}
+              <a-divider direction="vertical"></a-divider>
+              {{ term.target_text }}
+            </a-list-item>
+          </a-list>
+        </div>
+        <div>
+          <a-divider v-if="memorybankList.length !== 0" orientation="center">{{
+            $t('memorybank.list')
+          }}</a-divider>
+          <a-list v-if="memorybankList.length !== 0" class="memorybank-list">
+            <a-list-item
+              v-for="(memorybank, index) in memorybankList"
+              :key="index"
+            >
+              <a-divider>{{ index + 1 }}</a-divider>
+              {{ memorybank.source_text }}
+              <a-divider style="border-bottom-style: dotted"></a-divider>
+              {{ memorybank.target_text }}
+            </a-list-item>
+          </a-list>
+        </div>
       </div>
     </main>
   </div>
@@ -152,7 +165,8 @@
   import PreTransModal from '@/views/projects/components/pre-trans-modal/index.vue';
   import ImportGlossaryModal from '@/views/projects/components/import-glossary-modal/index.vue';
   import { getDocumentSegments, updateDocumentSegment } from '@/api/translate';
-  import { getGlossarySuggestion, addTermToGlossary } from '@/api/grossaries';
+  import { getGlossarySuggestion } from '@/api/glossaries';
+  import { getMemorySuggestion } from '@/api/memorybanks';
 
   const appStore = useAppStore();
   const translationStore = useTranslationStore();
@@ -164,11 +178,14 @@
   const theme = computed(() => {
     return appStore.theme;
   });
+  const iconClass = computed(() => {
+    return theme.value === 'light' ? '' : 'icon-dark';
+  });
 
   const documentId = Number(route.params.fileId);
-  const document = computed(() => translationStore.documents[documentId]);
+  const thisDocument = computed(() => translationStore.documents[documentId]);
   const segments = computed(() =>
-    document.value ? document.value.segments : []
+    thisDocument.value ? thisDocument.value.segments : [],
   );
   const pretransRes = ref<any>([]);
   const rowsArray = ref<any>([]);
@@ -207,6 +224,7 @@
     pretransRes.value = data.segments;
     data.segments.forEach((segment, index) => {
       translationStore.updateSegment(documentId, index, segment.target_text);
+      console.log('pretrans data:', pretransRes.value);
     });
     updateRows();
   };
@@ -226,10 +244,10 @@
         const response = await updateDocumentSegment(
           documentId,
           segmentId,
-          data
+          data,
         );
         if (response && response.data) {
-          console.log('Succeed to update segment', response.data);
+          console.log('Succeed to update segment', data, response.data);
         }
       } catch (error) {
         console.log('Fail to update segment', error);
@@ -251,14 +269,36 @@
     }
   };
 
-  const handleFocus = (index: number) => {
-    activeBlock.value = index;
-    getTerms(index);
+  const getMemorybanks = async (index: number) => {
+    const sourceText = segments.value[index].source_text;
+    try {
+      const response = await getMemorySuggestion(sourceText);
+      if (response && response.data) {
+        memorybankList.value = response.data.memories;
+        console.log('memorybanksList:', memorybankList);
+      }
+    } catch (error) {
+      console.log('Fail to fetch memorybanks', error);
+    }
   };
 
-  const handleBlur = async () => {
-    await nextTick();
-    activeBlock.value = -1;
+  const handleFocus = (index: number) => {
+    activeBlock.value = index;
+    console.log('block', activeBlock.value, 'active');
+    getTerms(index);
+    getMemorybanks(index);
+  };
+
+  const handleBlur = () => {
+    nextTick(() => {
+      if (!document.activeElement.closest('.confirm-btn')) {
+        activeBlock.value = -1;
+      }
+    });
+  };
+
+  const preventBlur = (event: MouseEvent) => {
+    event.preventDefault();
   };
 
   watch([segments, pretransRes], updateRows, { deep: true });
@@ -278,6 +318,10 @@
 </script>
 
 <style scoped>
+  .icon-dark {
+    color: rgb(216, 222, 227);
+  }
+
   .container {
     margin: 28px 28px;
     height: 92vh;
@@ -399,11 +443,20 @@
       }
     }
   }
+
   main .left-side {
     overflow-y: scroll;
   }
 
+  main .right-side {
+    overflow-y: scroll;
+  }
+
   main .left-side::-webkit-scrollbar {
+    display: none;
+  }
+
+  main .right-side::-webkit-scrollbar {
     display: none;
   }
 </style>

@@ -95,4 +95,3 @@ cp .env.backup .env
 ```bash
 docker compose up -d
 ```
-

@@ -1,8 +1,8 @@
 <template>
   <a-modal
     v-model:visible="visible"
-    :on-before-ok="postGlossaryTerm"
-    :title="$t('translate.addterm')"
+    :on-before-ok="editGlossaryTerm"
+    :title="$t('glossary.editTerm')"
     width="auto"
   >
     <div class="wrapper">
@@ -10,7 +10,7 @@
         <a-input-group>
           <a-select
             v-model="data.source_lang"
-            :style="{ width: '180px' }"
+            :style="{ width: '190px' }"
             placeholder="source language"
           >
             <template #prefix>
@@ -31,7 +31,7 @@
         <a-input-group>
           <a-select
             v-model="data.target_lang"
-            :style="{ width: '180px' }"
+            :style="{ width: '190px' }"
             placeholder="Target language"
           >
             <template #prefix>
@@ -56,10 +56,10 @@
 
 <script setup lang="ts">
   import { defineModel, ref, reactive } from 'vue';
-  import { addTermToGlossary } from '@/api/glossaries';
   import { useRoute, useRouter } from 'vue-router';
   import { Message } from '@arco-design/web-vue';
   import { useI18n } from 'vue-i18n';
+  import { updateGlossaryTerm } from '@/api/glossaries';
 
   const route = useRoute();
   const { t } = useI18n();
@@ -76,16 +76,16 @@
     target_text: '',
   });
 
-  const postGlossaryTerm = async () => {
+  const editGlossaryTerm = async () => {
     try {
       console.log(data);
-      const response = await addTermToGlossary(1, data);
+      const response = await updateGlossaryTerm(1, data);
       if (response.data) {
-        console.log('post term res:', response.data);
-        Message.success(t('glossary.import.success'));
+        console.log('update term res:', response.data);
+        Message.success(t('glossary.update.success'));
       }
     } catch (error) {
-      Message.error(t('glossary.import.fail'));
+      Message.error(t('glossary.update.fail'));
       console.log(error);
     }
   };

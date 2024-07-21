@@ -6,6 +6,7 @@ export default mergeConfig(
   {
     mode: 'development',
     server: {
+      port: 5173,
       open: true,
       fs: {
         strict: true,
@@ -26,5 +27,5 @@ export default mergeConfig(
       }),
     ],
   },
-  baseConfig
+  baseConfig,
 );

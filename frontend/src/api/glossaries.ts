@@ -26,24 +26,24 @@ export const deleteGlossary = (glossaryId: string) => {
   return request({
     url: `/glossaries/${glossaryId}`,
     method: 'DELETE',
-  }) as Promise<HttpRes<any[]>>;
+  }) as Promise<HttpRes<any>>;
 };
 
-export const getGlossaryTerms = (glossaryId: string) => {
+export const getGlossaryTerms = (glossaryId: number) => {
   return request({
     url: `/glossaries/${glossaryId}`,
     method: 'GET',
-  }) as Promise<HttpRes<any[]>>;
+  }) as Promise<HttpRes<any>>;
 };
 
 export const addTermToGlossary = (
-  glossaryId: string,
+  glossaryId: number,
   data: {
     source_lang: string;
     target_lang: string;
     source_text: string;
     target_text: string;
-  }
+  },
 ) => {
   return request({
     url: `/glossaries/${glossaryId}/terms`,
@@ -61,13 +61,13 @@ export const importGossaryCSV = (glossaryId: string, file: FormData) => {
 };
 
 export const updateGlossaryTerm = (
-  termId: string,
+  termId: number,
   data: {
     source_lang: string;
     target_lang: string;
     source_text: string;
     target_text: string;
-  }
+  },
 ) => {
   return request({
     url: `/glossaries/terms/${termId}`,

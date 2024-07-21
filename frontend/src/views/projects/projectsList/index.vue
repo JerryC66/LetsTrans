@@ -134,7 +134,6 @@
   import { useAppStore } from '@/store';
   import CreateProjectModal from '@/views/projects/components/create-project-modal/index.vue';
   import { getProjects, deleteProject } from '@/api/projects';
-  import { Modal } from '@arco-design/web-vue';
 
   const appStore = useAppStore();
   const router = useRouter();
@@ -207,7 +206,7 @@
   }
 
   .list {
-    background-color: rgba(252, 252, 252, 0.755);
+    background-color: rgb(255, 252, 252);
     /* overflow-y: scroll; */
   }
 

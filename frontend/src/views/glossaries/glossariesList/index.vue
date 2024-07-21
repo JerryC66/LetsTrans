@@ -6,21 +6,21 @@
     <nav>
       <div class="import_glossary">
         <a-button type="primary" size="large" @click="visible = true">{{
-          $t('glossary.import')
+          $t('glossary.create')
         }}</a-button>
       </div>
     </nav>
     <main>
-      <div class="grossaries-cards">
+      <div class="glossaries-cards">
         <a-row :gutter="16">
           <a-col
             :span="8"
-            v-for="glossary in glossariesRes.glossaries"
+            v-for="glossary in glossaries.glossaries"
             :key="glossary.id"
           >
             <a-card :title="glossary.name" :bordered="true">
               <template #extra>
-                <a-link @click="handleMore(glossary.id)">More</a-link>
+                <a-link @click="handleMore(1)">More</a-link>
               </template>
               <template #cover>
                 <div
@@ -53,14 +53,15 @@
       </div>
     </main>
   </div>
+  <create-glossary-modal v-model:visible="visible"></create-glossary-modal>
 </template>
 
 <script setup lang="ts">
   import { computed, ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { useAppStore } from '@/store';
-
-  import { getGlossaries } from '@/api/grossaries';
+  import { getGlossaries } from '@/api/glossaries';
+  import CreateGlossaryModal from '@/views/glossaries/components/create-glossary-modal/index.vue';
 
   const appStore = useAppStore();
   const router = useRouter();
@@ -68,21 +69,26 @@
   const theme = computed(() => {
     return appStore.theme;
   });
-  const glossariesRes = ref<any>([]);
+  const glossaries = ref<any>([]);
 
   const fetchGlossaries = async () => {
     try {
       const response = await getGlossaries();
       if (response && response.data) {
-        glossariesRes.value = response.data;
-        console.log(glossariesRes);
+        glossaries.value = response.data;
+        console.log('glossaries:', glossaries);
       }
     } catch (error) {
-      console.error('Failed to fetch grossaries:', error);
+      console.error('Failed to fetch glossaries:', error);
     }
   };
 
-  const handleMore = (glossaryId: number) => {};
+  const handleMore = (glossaryId: 1) => {
+    router.push({
+      name: 'glossaryTerms',
+      params: { glossaryId },
+    });
+  };
 
   onMounted(fetchGlossaries);
 </script>

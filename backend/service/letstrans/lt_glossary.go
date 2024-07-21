@@ -1,10 +1,11 @@
 package letstrans
 
 import (
+	"strings"
+
 	"github.com/firwoodlin/letstrans/global"
 	"github.com/firwoodlin/letstrans/model/letstrans"
 	"github.com/firwoodlin/letstrans/model/letstrans/response"
-	"strings"
 )
 
 // GlossaryService 定义术语库服务结构体

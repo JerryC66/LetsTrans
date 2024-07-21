@@ -72,7 +72,6 @@
 
   const sendChoosenAPI = async () => {
     Message.loading({ content: t('translate.pretrans.loading'), duration: 0 });
-    console.log('api:', choosenAPI.value, typeof choosenAPI.value);
     const data = {
       engine: choosenAPI.value,
       document_id: Number(documentId),
@@ -80,7 +79,6 @@
     try {
       const response = await postTransAPI(data);
       if (response.data) {
-        console.log(response);
         Message.success(t('translate.pretrans.success'));
         emit('pretransData', response.data);
       }

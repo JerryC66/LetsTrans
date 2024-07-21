@@ -21,7 +21,7 @@ export default function request<T = object>(config: AxiosRequestConfig) {
     (err: any): any => {
       console.error(err);
       Message.error(err.message);
-    }
+    },
   );
 
   instance.interceptors.response.use(
@@ -46,7 +46,7 @@ export default function request<T = object>(config: AxiosRequestConfig) {
         Message.error(err.message);
       }
       return null;
-    }
+    },
   );
 
   return new Promise<HttpRes<T>>((resolve, reject) => {
@@ -56,7 +56,7 @@ export default function request<T = object>(config: AxiosRequestConfig) {
       },
       (reason) => {
         reject(reason);
-      }
+      },
     );
   });
 }
