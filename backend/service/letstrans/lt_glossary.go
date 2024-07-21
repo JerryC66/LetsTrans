@@ -36,16 +36,18 @@ func (s *GlossaryService) DeleteGlossary(glossaryID uint) (err error) {
 	return err
 }
 
-func (s *GlossaryService) CreateTerm(term letstrans.Term) (res response.TermAddResponse, err error) {
+func (s *GlossaryService) CreateTerm(term letstrans.Term) (res *response.TermAddResponse, err error) {
 	var glossary letstrans.Glossary
-	if err := global.GVA_DB.Model(&letstrans.Glossary{}).Where("id = ?", term.GlossaryID).First(&glossary).Error; err != nil {
+	if err = global.GVA_DB.Model(&letstrans.Glossary{}).Where("id = ?", term.GlossaryID).First(&glossary).Error; err != nil {
 		return res, err
 	}
-	if err := global.GVA_DB.Model(&letstrans.Term{}).Create(&term).Error; err == nil {
+	if err = global.GVA_DB.Model(&letstrans.Term{}).Create(&term).Error; err != nil {
 		return res, err
 	}
-	res.Glossary = glossary
-	res.Term = term
+	res = &response.TermAddResponse{
+		Term:     term,
+		Glossary: glossary,
+	}
 	return
 }
 
